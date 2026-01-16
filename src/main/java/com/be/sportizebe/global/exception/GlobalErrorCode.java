@@ -1,6 +1,6 @@
 package com.be.sportizebe.global.exception;
 
-import com.be.pbl.global.exception.model.BaseErrorCode;
+import com.be.sportizebe.global.exception.model.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

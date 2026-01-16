@@ -1,7 +1,7 @@
 package com.be.sportizebe.global.exception;
 
-import com.be.pbl.global.exception.model.BaseErrorCode;
-import com.be.pbl.global.response.BaseResponse;
+import com.be.sportizebe.global.exception.model.BaseErrorCode;
+import com.be.sportizebe.global.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
