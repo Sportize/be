@@ -1,0 +1,65 @@
+services:
+  postgreSQL:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sportize-network
+
+  app:
+    image: imjuyongp/sportize:latest # 추후에 도커 허브에 저장할 이미지 계정이랑 이미지 이름 설정하기
+    restart: always
+    expose:
+      - "8080"
+    env_file:
+      - .env # 팀원들끼리만 공유
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod # 서브모듈 환경변수 prod 버전 인식
+      - TZ=Asia/Seoul
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    command:
+      - java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE} -jar app.jar
+      # 실행 명령어: jar 파일을 실행하면서 Spring 프로필 활성화
+    depends_on:
+      - postgreSQL  # 이 서비스가 mysql이 먼저 실행된 후 시작되도록
+    networks:
+      - sportize-network  # services 끼리는 같은 네트워크를 공유
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certbot:/etc/letsencrypt
+      - ./nginx/www:/var/www/certbot
+    depends_on:
+      - app
+    networks:
+      - sportize-network
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certbot:/etc/letsencrypt
+      - ./nginx/www:/var/www/certbot
+    networks:
+      - sportize-network
+networks:
+  sportize-network:
+    driver: bridge  # Docker 기본 브리지 네트워크를 사용
+
+volumes:
+  postgres-data:
