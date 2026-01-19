@@ -25,13 +25,13 @@ public class SwaggerConfig {
 
     // 운영 서버
     Server prodServer = new Server();
-    prodServer.setUrl("https://api.insa-exhibition.shop");
+    prodServer.setUrl("");
     prodServer.setDescription("🚀 운영 서버");
 
     return new OpenAPI()
         .addServersItem(localServer)
         .addServersItem(prodServer)
-        .info(new Info().title("Swagger API 명세서").version("1.0").description("PBL-kiosk-App"));
+        .info(new Info().title("Swagger API 명세서").version("1.0").description("Sportize API docs"));
   }
 
   @Bean
