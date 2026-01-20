@@ -17,6 +17,13 @@ public class PostServiceImpl implements PostService {
 
   private final PostRepository postRepository;
 
+  /**
+   * Creates a new Post from the given request and properties, persists it, and returns a response DTO.
+   *
+   * @param property attributes applied to the created Post entity
+   * @param request  data used to construct the Post entity
+   * @return a {@code CreatePostResponse} representing the persisted Post
+   */
   @Override
   @Transactional
   public CreatePostResponse createPost(PostProperty property, CreatePostRequest request) {

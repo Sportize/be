@@ -10,15 +10,34 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    // 게시글의 최상위 댓글 목록 조회 (대댓글 제외)
+    /**
+ * Retrieve top-level comments for the given post ordered by creation time ascending.
+ *
+ * @param post the post whose top-level (non-reply) comments to fetch
+ * @return a list of top-level Comment entities for the specified post ordered by `createdAt` ascending
+ */
     List<Comment> findByPostAndParentIsNullOrderByCreatedAtAsc(Post post);
 
-    // 게시글의 전체 댓글 수
+    /**
+ * Count comments associated with a post.
+ *
+ * @param post the post to count comments for
+ * @return the total number of comments associated with the given post
+ */
     long countByPost(Post post);
 
-    // 특정 댓글의 대댓글 수
+    /**
+ * Count replies for the specified parent comment.
+ *
+ * @param parent the parent Comment whose direct child comments (replies) are counted
+ * @return the number of replies to the given parent comment
+ */
     long countByParent(Comment parent);
 
-    // 게시글의 모든 댓글 삭제
+    /**
+ * Deletes all comments associated with the given post.
+ *
+ * @param post the post whose associated comments should be removed
+ */
     void deleteAllByPost(Post post);
 }

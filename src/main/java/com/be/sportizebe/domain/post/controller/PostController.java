@@ -26,6 +26,13 @@ public class PostController {
 
     private final PostService postService;
 
+    /**
+     * Create a post for the specified board type.
+     *
+     * @param property the board type for the new post (e.g., SOCCER, BASKETBALL, FREE)
+     * @param request  the request body containing the new post's details
+     * @return a ResponseEntity with HTTP 201 containing a BaseResponse that wraps the created post data and a success message
+     */
     @PostMapping("/posts/{property}")
     @Operation(summary = "게시글 생성", description = "게시판 종류별 게시글 생성")
     public ResponseEntity<BaseResponse<CreatePostResponse>> createPost(

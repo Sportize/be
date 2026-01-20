@@ -17,6 +17,14 @@ public record CreateCommentRequest(
     @Schema(description = "부모 댓글 ID (대댓글인 경우)", example = "1")
     Long parentId) {
 
+  /**
+   * Creates a Comment entity from this DTO using the provided post, user, and optional parent.
+   *
+   * @param post the Post that the comment belongs to
+   * @param user the User who authored the comment
+   * @param parent the parent Comment when creating a reply, or null for a top-level comment
+   * @return the constructed Comment entity
+   */
   public Comment toEntity(Post post, User user, Comment parent) {
     return Comment.builder()
         .content(content)

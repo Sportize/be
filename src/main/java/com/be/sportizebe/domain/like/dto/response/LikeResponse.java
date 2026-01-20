@@ -12,6 +12,15 @@ public record LikeResponse(
     @Schema(description = "대상 ID", example = "1") Long targetId,
     @Schema(description = "총 좋아요 수", example = "10") long likeCount) {
 
+  /**
+   * Create a LikeResponse with the provided values.
+   *
+   * @param liked     whether the current user has liked the target
+   * @param targetType the type of the liked target
+   * @param targetId  the identifier of the target
+   * @param likeCount the total number of likes for the target
+   * @return a LikeResponse populated with the given properties
+   */
   public static LikeResponse of(boolean liked, LikeTargetType targetType, Long targetId, long likeCount) {
     return LikeResponse.builder()
         .liked(liked)

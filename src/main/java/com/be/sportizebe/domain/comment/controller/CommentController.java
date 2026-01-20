@@ -25,6 +25,14 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    /**
+     * Create a comment or a reply for the specified post.
+     *
+     * @param postId the ID of the post to which the comment or reply will be added
+     * @param request the request payload containing comment content and optional parent comment information
+     * @param user the authenticated user creating the comment
+     * @return ResponseEntity containing a BaseResponse with the created CommentResponse and a success message; returns HTTP 201 Created on success
+     */
     @PostMapping
     @Operation(summary = "댓글 생성", description = "게시글에 댓글 또는 대댓글 생성")
     public ResponseEntity<BaseResponse<CommentResponse>> createComment(
@@ -36,6 +44,12 @@ public class CommentController {
             .body(BaseResponse.success("댓글 생성 성공", response));
     }
 
+    /**
+     * Retrieves the comments for the specified post, including nested replies.
+     *
+     * @param postId the ID of the post whose comments are requested
+     * @return an HTTP 200 response containing a BaseResponse with a list of CommentResponse objects for the post
+     */
     @GetMapping
     @Operation(summary = "댓글 목록 조회", description = "게시글의 댓글 목록 조회 (대댓글 포함)")
     public ResponseEntity<BaseResponse<List<CommentResponse>>> getComments(
@@ -52,7 +66,12 @@ public class CommentController {
 //        @AuthenticationPrincipal User user) {
 //        commentService.deleteComment(commentId, user);
 //        return ResponseEntity.ok(BaseResponse.success("댓글 삭제 성공", null));
-//    }
+/**
+     * Retrieve the total number of comments for the specified post.
+     *
+     * @param postId the ID of the post to count comments for
+     * @return the total number of comments for the post
+     */
 
     @GetMapping("/count")
     @Operation(summary = "댓글 수 조회", description = "게시글의 총 댓글 수 조회")

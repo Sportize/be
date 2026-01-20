@@ -31,6 +31,12 @@ public record CommentResponse(
     @Schema(description = "대댓글 수", example = "3")
     int childrenCount) {
 
+  /**
+   * Create a CommentResponse DTO from a Comment entity, recursively mapping child comments.
+   *
+   * @param comment the Comment entity to convert
+   * @return a CommentResponse representing the given comment with its children mapped and childrenCount set to the number of mapped children
+   */
   public static CommentResponse from(Comment comment) {
     List<CommentResponse> childResponses = comment.getChildren().stream()
         .map(CommentResponse::from)

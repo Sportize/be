@@ -19,6 +19,16 @@ public class LikeServiceImpl implements LikeService {
 
   private final LikeRepository likeRepository;
 
+  /**
+   * Toggle the like status for a user on a specified target.
+   *
+   * If the user has already liked the target the like is removed; otherwise a new like is created.
+   *
+   * @param user the user performing the action
+   * @param targetType the type of the entity being liked (e.g., post or comment)
+   * @param targetId the identifier of the target entity
+   * @return a LikeResponse containing whether the target is liked by the user after the operation, the target identity, and the current total like count
+   */
   @Override
   @Transactional
   public LikeResponse toggleLike(User user, LikeTargetType targetType, Long targetId) {
@@ -47,11 +57,26 @@ public class LikeServiceImpl implements LikeService {
     return LikeResponse.of(liked, targetType, targetId, likeCount);
   }
 
+  /**
+   * Checks whether the given user has liked the specified target.
+   *
+   * @param user the user to check for a like
+   * @param targetType the type of the target being checked
+   * @param targetId the identifier of the target being checked
+   * @return `true` if the user has liked the specified target, `false` otherwise
+   */
   @Override
   public boolean isLiked(User user, LikeTargetType targetType, Long targetId) {
     return likeRepository.existsByUserAndTargetTypeAndTargetId(user, targetType, targetId);
   }
 
+  /**
+   * Get the number of likes for a specific target.
+   *
+   * @param targetType the type/category of the like target (for example, POST or COMMENT)
+   * @param targetId   the unique identifier of the target
+   * @return           the total number of likes for the specified target
+   */
   @Override
   public long getLikeCount(LikeTargetType targetType, Long targetId) { // 좋아요 개수 추적 메서드
     return likeRepository.countByTargetTypeAndTargetId(targetType, targetId);

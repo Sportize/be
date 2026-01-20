@@ -12,6 +12,12 @@ public record CreatePostRequest(
     boolean isAnonymous,
     String imgUrl) {
 
+  /**
+   * Create a Post entity populated from this DTO and the given property.
+   *
+   * @param property the PostProperty to assign to the created Post
+   * @return the Post entity with title, content, isAnonymous, imgUrl copied from this DTO and the provided property
+   */
   public Post toEntity(PostProperty property) { // DTO -> Entity 변환
     return Post.builder()
         .title(title)

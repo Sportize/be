@@ -25,6 +25,15 @@ public class CommentServiceImpl implements CommentService {
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
 
+  /**
+   * Create a new comment for a post, optionally as a reply to an existing comment.
+   *
+   * @param postId ID of the post to attach the comment to
+   * @param request DTO containing comment content and optional parentId for a parent comment
+   * @param user   author of the new comment
+   * @return CommentResponse representation of the saved comment
+   * @throws CustomException when the post does not exist (PostErrorCode.POST_NOT_FOUND) or when the specified parent comment does not exist (CommentErrorCode.COMMENT_NOT_FOUND)
+   */
   @Override
   @Transactional
   public CommentResponse createComment(Long postId, CreateCommentRequest request, User user) {
@@ -46,6 +55,13 @@ public class CommentServiceImpl implements CommentService {
     return CommentResponse.from(savedComment);
   }
 
+  /**
+   * Retrieve top-level comments for the specified post and map them to CommentResponse objects.
+   *
+   * @param postId the ID of the post whose top-level comments should be returned
+   * @return a list of CommentResponse representing the post's top-level comments; each response includes its nested replies via the `children` field
+   * @throws CustomException with PostErrorCode.POST_NOT_FOUND if no post exists with the given `postId`
+   */
   @Override
   public List<CommentResponse> getCommentsByPostId(Long postId) {
     // 게시글 조회
@@ -72,7 +88,13 @@ public class CommentServiceImpl implements CommentService {
 //    }
 //
 //    commentRepository.delete(comment);
-//  }
+/**
+   * Get the number of comments for the specified post.
+   *
+   * @param postId the ID of the post to count comments for
+   * @return the total number of comments associated with the post
+   * @throws CustomException if no post exists with the given ID (PostErrorCode.POST_NOT_FOUND)
+   */
 
   @Override
   public long getCommentCount(Long postId) {

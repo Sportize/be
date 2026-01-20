@@ -13,6 +13,13 @@ public record CreatePostResponse(
     @Schema(description = "게시글 사진 url", example = "s3 url") String imgUrl,
     @Schema(description = "익명 여부", example = "true:익명 / false:사용자명") String isAnonymous) {
 
+  /**
+   * Create a CreatePostResponse DTO from a Post entity.
+   *
+   * @param post the source Post entity to convert
+   * @return a CreatePostResponse populated from the given post, with `publisher` and `isAnonymous` set to
+   *         "익명" when the post is anonymous and "사용자명" otherwise
+   */
   public static CreatePostResponse from(Post post) { // Post -> Resonse 변환
     return CreatePostResponse.builder()
         .postId(post.getId())
