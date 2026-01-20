@@ -1,9 +1,17 @@
 package com.be.sportizebe.domain.chat.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.Instant;
 
+@Entity
+@Table(name = "chat_room_members")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@IdClass(ChatRoomMemberId.class)
 public class ChatRoomMember {
     public enum Role {
         OWNER,

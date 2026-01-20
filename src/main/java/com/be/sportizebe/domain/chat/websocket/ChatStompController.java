@@ -16,7 +16,7 @@ import org.springframework.stereotype.Controller;
 public class ChatStompController {
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;   // ✅ 추가
-    private SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/chat.send")
     public void send(ChatSendRequest req){
