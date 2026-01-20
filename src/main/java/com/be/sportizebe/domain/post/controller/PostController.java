@@ -27,7 +27,7 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/posts/{property}")
-    @Operation(summary = "게시글 생성 api", description = "게시판 종류별 게시글 생성")
+    @Operation(summary = "게시글 생성", description = "게시판 종류별 게시글 생성")
     public ResponseEntity<BaseResponse<CreatePostResponse>> createPost(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
         @RequestBody @Valid CreatePostRequest request) {
