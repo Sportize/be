@@ -4,13 +4,14 @@ import com.be.sportizebe.domain.auth.exception.AuthErrorCode;
 import com.be.sportizebe.global.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Component
 public class JwtProvider {
 
-  private Key key;
+  private SecretKey key;
   private final String secretKey;
   @Getter private final long accessTokenExpireTime;
   @Getter private final long refreshTokenExpireTime;
@@ -50,11 +51,11 @@ public class JwtProvider {
   private String createToken(Long userId, long expireTimeMillis) {
     Date now = new Date();
     return Jwts.builder()
-        .setSubject(String.valueOf(userId))
-        .setId(UUID.randomUUID().toString())
-        .setIssuedAt(now)
-        .setExpiration(new Date(now.getTime() + expireTimeMillis))
-        .signWith(key, SignatureAlgorithm.HS256)
+        .subject(String.valueOf(userId))
+        .id(UUID.randomUUID().toString())
+        .issuedAt(now)
+        .expiration(new Date(now.getTime() + expireTimeMillis))
+        .signWith(key, Jwts.SIG.HS256)
         .compact();
   }
 
@@ -68,7 +69,7 @@ public class JwtProvider {
       throw new CustomException(AuthErrorCode.UNSUPPORTED_TOKEN);
     } catch (MalformedJwtException e) {
       throw new CustomException(AuthErrorCode.MALFORMED_JWT_TOKEN);
-    } catch (io.jsonwebtoken.SignatureException e) {
+    } catch (SecurityException e) {
       throw new CustomException(AuthErrorCode.INVALID_SIGNATURE);
     } catch (IllegalArgumentException e) {
       throw new CustomException(AuthErrorCode.ILLEGAL_ARGUMENT);
@@ -86,6 +87,6 @@ public class JwtProvider {
   }
 
   private Claims parseClaims(String token) {
-    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
   }
 }
