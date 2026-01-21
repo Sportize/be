@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Builder
-@Schema(title = "CreatePostResponse DTO", description = "게시글 생성 응답")
+@Schema(title = "PostResponse DTO", description = "게시글 관련 응답")
 public record PostResponse(
     @Schema(description = "게시글 고유번호", example = "1") Long postId,
     @Schema(description = "게시글 제목", example = "게시글 제목 ...") String title,
