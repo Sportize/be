@@ -33,10 +33,15 @@ public class CommentServiceImpl implements CommentService {
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
     // 부모 댓글 조회 (대댓글인 경우)
-    Comment parent = null;
-    if (request.parentId() != null) {
+    Comment parent = null; // null로 초기화
+    if (request.parentId() != null) { // parentId가 null이 아니면 대댓글이기 때문에 부모 댓글 조회가 필요함
       parent = commentRepository.findById(request.parentId())
           .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
+
+      // 해당 대댓글의 부모 댓글이 같은 게시글에 속하는지 검증
+      if(!parent.getId().equals(post.getId())) {
+          throw new CustomException(CommentErrorCode.COMMENT_PARENT_POST_MISMATCH);
+      }
     }
 
     // 댓글 생성
@@ -47,16 +52,16 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
+  @Transactional
   public List<CommentResponse> getCommentsByPostId(Long postId) {
     // 게시글 조회
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
-    // 최상위 댓글만 조회 (대댓글은 children으로 포함됨)
     List<Comment> comments = commentRepository.findByPostAndParentIsNullOrderByCreatedAtAsc(post);
 
     return comments.stream()
-        .map(CommentResponse::from)
+        .map(CommentResponse::from) // 여기서 LazyInitializationException가 터질 수 있기때문에 @Transaction필요
         .toList();
   }
 

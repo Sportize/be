@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "likes", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "target_type", "target_id"})
+    @UniqueConstraint(columnNames = {"user_id", "target_type", "target_id"}) // unique 제약 필수(동시 요청 시 중복 insert 방지)
 })
 public class Like extends BaseTimeEntity {
 
