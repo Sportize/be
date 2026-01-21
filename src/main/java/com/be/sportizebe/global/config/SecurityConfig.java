@@ -28,7 +28,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     return http.csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource)) // CORS 설정 추가
         .authorizeHttpRequests((auth) -> auth.anyRequest().permitAll()) // 모든 요청 허용
-        // .httpBasic(Customizer.withDefaults())
         .build();
   }
 }

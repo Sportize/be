@@ -1,7 +1,10 @@
 package com.be.sportizebe.global.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +31,21 @@ public class SwaggerConfig {
     prodServer.setUrl("");
     prodServer.setDescription("🚀 운영 서버");
 
-    return new OpenAPI()
-        .addServersItem(localServer)
-        .addServersItem(prodServer)
-        .info(new Info().title("Swagger API 명세서").version("1.0").description("Sportize API docs"));
+      return new OpenAPI()
+          .addServersItem(localServer)
+          .addServersItem(prodServer)
+          .info(new Info().title("Swagger API 명세서").version("1.0").description("Sportize-api-docs"))
+          // Bearer 토큰 인증 설정
+          .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+          .components(
+              new Components()
+                  .addSecuritySchemes(
+                      securitySchemeName,
+                      new SecurityScheme()
+                          .name(securitySchemeName)
+                          .type(SecurityScheme.Type.HTTP)
+                          .scheme("bearer")
+                          .bearerFormat("JWT")));
   }
 
   @Bean

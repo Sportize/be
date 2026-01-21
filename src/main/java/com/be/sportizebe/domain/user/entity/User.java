@@ -31,7 +31,6 @@ public class User extends BaseTimeEntity {
     @JsonIgnore // 응답 시 데이터를 json 형식으로 보낼때 이 부분은 보내지 않는다
     private String password;
 
-    @Column(nullable = false)
     @JsonIgnore
     private String refreshToken;
 
@@ -45,4 +44,8 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글 목록
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
