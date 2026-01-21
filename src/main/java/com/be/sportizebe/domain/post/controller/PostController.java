@@ -31,7 +31,10 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
         @RequestBody @Valid CreatePostRequest request) {
-        PostResponse response = postService.createPost(property, request);
+        // TODO: 인증 로직 개발 후 @AuthenticationPrincipal User user로 변경
+        User user = userRepository.findById(1L)
+            .orElseThrow(() -> new RuntimeException("테스트 유저가 없습니다. users 테이블에 id=1인 유저를 추가해주세요."));
+        PostResponse response = postService.createPost(property, request, user);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("게시글 생성 성공", response));
     }

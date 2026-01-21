@@ -2,6 +2,7 @@ package com.be.sportizebe.domain.post.dto.request;
 
 import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.domain.post.entity.PostProperty;
+import com.be.sportizebe.domain.user.entity.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
@@ -12,13 +13,14 @@ public record CreatePostRequest(
     boolean isAnonymous,
     String imgUrl) {
 
-  public Post toEntity(PostProperty property) { // DTO -> Entity 변환
+  public Post toEntity(PostProperty property, User user) { // DTO -> Entity 변환
     return Post.builder()
         .title(title)
         .content(content)
         .isAnonymous(isAnonymous)
         .imgUrl(imgUrl)
         .property(property)
+        .user(user)
         .build();
   }
 }

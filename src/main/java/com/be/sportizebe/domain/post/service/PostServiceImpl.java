@@ -23,8 +23,8 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional
-  public PostResponse createPost(PostProperty property, CreatePostRequest request) {
-    Post post = request.toEntity(property); // 요청 dto 데이터를 entity로 변환
+  public PostResponse createPost(PostProperty property, CreatePostRequest request, User user) {
+    Post post = request.toEntity(property, user); // 요청 dto 데이터를 entity로 변환
 
     Post savedPost = postRepository.save(post); // db에 저장
 
