@@ -34,13 +34,18 @@ public class CommentServiceImpl implements CommentService {
 
     // 부모 댓글 조회 (대댓글인 경우)
     Comment parent = null; // null로 초기화
-    if (request.parentId() != null) { // parentId가 null이 아니면 대댓글이기 때문에 부모 댓글 조회가 필요함
+    if (request.parentId() != null) { // parentId가 null이 아니면 대댓글이기 때문에 부모 댓글 조회로 검증 필요함
       parent = commentRepository.findById(request.parentId())
           .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
 
       // 해당 대댓글의 부모 댓글이 같은 게시글에 속하는지 검증
       if(parent.getPost().getId() != post.getId()) {
           throw new CustomException(CommentErrorCode.COMMENT_PARENT_POST_MISMATCH);
+      }
+
+      // 부모 댓글이 이미 대댓글인 경우 답글 불가 (댓글 깊이 1단계로 제한)
+      if(parent.getParent() != null) {
+          throw new CustomException(CommentErrorCode.NESTED_REPLY_NOT_ALLOWED);
       }
     }
 

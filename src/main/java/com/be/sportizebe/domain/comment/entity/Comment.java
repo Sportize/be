@@ -36,8 +36,8 @@ public class Comment extends BaseTimeEntity {
     private User user; // 작성자 (프록시 객체)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Comment parent; // 부모 댓글 (null이면 일반 댓글)
+    @JoinColumn(name = "parent_id") // 자기 참조
+    private Comment parent; // 부모 댓글 (null이면 부모 댓글)
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

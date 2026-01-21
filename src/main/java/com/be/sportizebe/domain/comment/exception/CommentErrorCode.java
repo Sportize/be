@@ -12,7 +12,8 @@ public enum CommentErrorCode implements BaseErrorCode {
   COMMENT_DELETE_DENIED("C002", "댓글 삭제 권한이 없습니다.", HttpStatus.FORBIDDEN),
   COMMENT_UPDATE_DENIED("C003", "댓글 수정 권한이 없습니다.", HttpStatus.FORBIDDEN),
   INVALID_PARENT_COMMENT("C004", "유효하지 않은 부모 댓글입니다.", HttpStatus.BAD_REQUEST),
-  COMMENT_PARENT_POST_MISMATCH("C005", "부모 댓글 다른 게시글에 속해있습니다.", HttpStatus.BAD_REQUEST);
+  COMMENT_PARENT_POST_MISMATCH("C005", "부모 댓글 다른 게시글에 속해있습니다.", HttpStatus.BAD_REQUEST),
+  NESTED_REPLY_NOT_ALLOWED("C006", "대댓글에는 답글을 달 수 없습니다.", HttpStatus.BAD_REQUEST);
 
   private final String code;
   private final String message;
