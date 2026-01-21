@@ -2,7 +2,7 @@ package com.be.sportizebe.domain.post.controller;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
-import com.be.sportizebe.domain.post.dto.response.CreatePostResponse;
+import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.post.service.PostService;
 import com.be.sportizebe.domain.user.entity.User;
@@ -28,23 +28,23 @@ public class PostController {
 
     @PostMapping("/posts/{property}")
     @Operation(summary = "게시글 생성", description = "게시판 종류별 게시글 생성")
-    public ResponseEntity<BaseResponse<CreatePostResponse>> createPost(
+    public ResponseEntity<BaseResponse<PostResponse>> createPost(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
         @RequestBody @Valid CreatePostRequest request) {
-        CreatePostResponse response = postService.createPost(property, request);
+        PostResponse response = postService.createPost(property, request);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("게시글 생성 성공", response));
     }
 
     @PutMapping("/posts/{postId}")
     @Operation(summary = "게시글 수정", description = "게시글 수정 (작성자만 가능)")
-    public ResponseEntity<BaseResponse<CreatePostResponse>> updatePost(
+    public ResponseEntity<BaseResponse<PostResponse>> updatePost(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
         @RequestBody @Valid UpdatePostRequest request) {
         // TODO: 인증 로직 개발 후 @AuthenticationPrincipal User user로 변경
         User user = userRepository.findById(1L)
             .orElseThrow(() -> new RuntimeException("테스트 유저가 없습니다. users 테이블에 id=1인 유저를 추가해주세요."));
-        CreatePostResponse response = postService.updatePost(postId, request, user);
+        PostResponse response = postService.updatePost(postId, request, user);
         return ResponseEntity.ok(BaseResponse.success("게시글 수정 성공", response));
     }
 

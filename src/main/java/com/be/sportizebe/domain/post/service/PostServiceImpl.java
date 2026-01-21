@@ -2,7 +2,7 @@ package com.be.sportizebe.domain.post.service;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
-import com.be.sportizebe.domain.post.dto.response.CreatePostResponse;
+import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.post.exception.PostErrorCode;
@@ -23,17 +23,17 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional
-  public CreatePostResponse createPost(PostProperty property, CreatePostRequest request) {
+  public PostResponse createPost(PostProperty property, CreatePostRequest request) {
     Post post = request.toEntity(property); // 요청 dto 데이터를 entity로 변환
 
     Post savedPost = postRepository.save(post); // db에 저장
 
-    return CreatePostResponse.from(savedPost); // entity를 dto로 변환하여 응답
+    return PostResponse.from(savedPost); // entity를 dto로 변환하여 응답
   }
 
   @Override
   @Transactional
-  public CreatePostResponse updatePost(Long postId, UpdatePostRequest request, User user) {
+  public PostResponse updatePost(Long postId, UpdatePostRequest request, User user) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
@@ -44,7 +44,7 @@ public class PostServiceImpl implements PostService {
 
     post.update(request.title(), request.content(), request.imgUrl());
 
-    return CreatePostResponse.from(post);
+    return PostResponse.from(post);
   }
 
   @Override
