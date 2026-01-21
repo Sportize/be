@@ -4,6 +4,7 @@ import com.be.sportizebe.domain.comment.dto.request.CreateCommentRequest;
 import com.be.sportizebe.domain.comment.dto.response.CommentResponse;
 import com.be.sportizebe.domain.comment.service.CommentService;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,7 +13,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,13 +24,16 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final UserRepository userRepository; // TODO: 인증 로직 개발 후 제거
 
     @PostMapping
     @Operation(summary = "댓글 생성", description = "게시글에 댓글 또는 대댓글 생성")
     public ResponseEntity<BaseResponse<CommentResponse>> createComment(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
-        @RequestBody @Valid CreateCommentRequest request,
-        @AuthenticationPrincipal User user) {
+        @RequestBody @Valid CreateCommentRequest request) {
+        // TODO: 인증 로직 개발 후 @AuthenticationPrincipal User user로 변경
+        User user = userRepository.findById(1L)
+            .orElseThrow(() -> new RuntimeException("테스트 유저가 없습니다. users 테이블에 id=1인 유저를 추가해주세요."));
         CommentResponse response = commentService.createComment(postId, request, user);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("댓글 생성 성공", response));
