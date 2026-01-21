@@ -36,4 +36,10 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user; // 작성자
+
+    public void update(String title, String content, String imgUrl) {
+        this.title = title;
+        this.content = content;
+        this.imgUrl = imgUrl;
+    }
 }
