@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user")
+@Table(name = "users")
 public class User extends BaseTimeEntity {
 
     @Id
