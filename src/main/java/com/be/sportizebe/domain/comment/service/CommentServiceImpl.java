@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
           .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
 
       // 해당 대댓글의 부모 댓글이 같은 게시글에 속하는지 검증
-      if(!parent.getId().equals(post.getId())) {
+      if(parent.getPost().getId() != post.getId()) {
           throw new CustomException(CommentErrorCode.COMMENT_PARENT_POST_MISMATCH);
       }
     }
