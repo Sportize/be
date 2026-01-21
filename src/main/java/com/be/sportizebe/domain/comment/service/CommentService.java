@@ -15,7 +15,7 @@ public interface CommentService {
   List<CommentResponse> getCommentsByPostId(Long postId);
 
   // 댓글 삭제
-  // void deleteComment(Long commentId, User user);
+  void deleteComment(Long commentId, User user);
 
   // 게시글의 댓글 수 조회
   long getCommentCount(Long postId);

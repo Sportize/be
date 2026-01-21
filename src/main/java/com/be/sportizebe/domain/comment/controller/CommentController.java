@@ -47,15 +47,17 @@ public class CommentController {
         return ResponseEntity.ok(BaseResponse.success(responses));
     }
 
-//    @DeleteMapping("/{commentId}")
-//    @Operation(summary = "댓글 삭제", description = "댓글 삭제 (대댓글도 함께 삭제)")
-//    public ResponseEntity<BaseResponse<Void>> deleteComment(
-//        @Parameter(description = "게시글 ID") @PathVariable Long postId,
-//        @Parameter(description = "댓글 ID") @PathVariable Long commentId,
-//        @AuthenticationPrincipal User user) {
-//        commentService.deleteComment(commentId, user);
-//        return ResponseEntity.ok(BaseResponse.success("댓글 삭제 성공", null));
-//    }
+    @DeleteMapping("/{commentId}")
+    @Operation(summary = "댓글 삭제", description = "댓글 삭제 (대댓글도 함께 삭제)")
+    public ResponseEntity<BaseResponse<Void>> deleteComment(
+        @Parameter(description = "게시글 ID") @PathVariable Long postId,
+        @Parameter(description = "댓글 ID") @PathVariable Long commentId) {
+        // TODO: 인증 로직 개발 후 @AuthenticationPrincipal User user로 변경
+        User user = userRepository.findById(1L)
+            .orElseThrow(() -> new RuntimeException("테스트 유저가 없습니다. users 테이블에 id=1인 유저를 추가해주세요."));
+        commentService.deleteComment(commentId, user);
+        return ResponseEntity.ok(BaseResponse.success("댓글 삭제 성공", null));
+    }
 
     @GetMapping("/count")
     @Operation(summary = "댓글 수 조회", description = "게시글의 총 댓글 수 조회")

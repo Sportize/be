@@ -65,19 +65,19 @@ public class CommentServiceImpl implements CommentService {
         .toList();
   }
 
-//  @Override
-//  @Transactional
-//  public void deleteComment(Long commentId, User user) {
-//    Comment comment = commentRepository.findById(commentId)
-//        .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
-//
-//    // 작성자 확인
-//    if (!comment.getUser().getId().equals(user.getId())) {
-//      throw new CustomException(CommentErrorCode.COMMENT_DELETE_DENIED);
-//    }
-//
-//    commentRepository.delete(comment);
-//  }
+  @Override
+  @Transactional
+  public void deleteComment(Long commentId, User user) {
+    Comment comment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
+
+    // 작성자 확인
+    if (comment.getUser().getId() != user.getId()) {
+      throw new CustomException(CommentErrorCode.COMMENT_DELETE_DENIED);
+    }
+
+    commentRepository.delete(comment);
+  }
 
   @Override
   public long getCommentCount(Long postId) {
