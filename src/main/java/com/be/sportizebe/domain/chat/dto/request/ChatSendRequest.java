@@ -1,4 +1,4 @@
-package com.be.sportizebe.domain.chat.dto;
+package com.be.sportizebe.domain.chat.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
