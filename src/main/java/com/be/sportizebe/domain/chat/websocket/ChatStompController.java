@@ -29,7 +29,7 @@ public class ChatStompController {
                 req.getContent()
         );
         messagingTemplate.convertAndSend(
-                "/topic/chat/rooms/" + req.getRoomId(),
+                "/sub/chat/rooms/" + req.getRoomId(),
                 ChatMessageResponse.from(saved)
         );
     }
