@@ -442,7 +442,7 @@
         }
 
         const rid = roomIdValue();
-        const dest = `/topic/chat/rooms/${rid}`;
+        const dest = `/sub/chat/rooms/${rid}`;
         $("roomTitle").textContent = `room: ${rid}`;
 
         currentSub = stompClient.subscribe(dest, (frame) => {
@@ -459,7 +459,7 @@
                 });
             }
         });
-        stompClient.send("/app/chat.join", {}, JSON.stringify({
+        stompClient.send("/pub/chat.join", {}, JSON.stringify({
             roomId: Number(roomIdValue()),
             senderUserId: myUserId(),
             senderNickname: myNickname()
@@ -490,7 +490,7 @@
             content: text
         };
 
-        stompClient.send("/app/chat.send", {}, JSON.stringify(payload));
+        stompClient.send("/pub/chat.send", {}, JSON.stringify(payload));
         debug("[SENT] " + JSON.stringify(payload));
 
         contentEl.value = "";
@@ -501,7 +501,7 @@
 
         // 🔽 여기 먼저
         if (stompClient && stompClient.connected) {
-            stompClient.send("/app/chat.leave", {}, JSON.stringify({
+            stompClient.send("/pub/chat.leave", {}, JSON.stringify({
                 roomId: Number(roomIdValue()),
                 senderUserId: myUserId(),
                 senderNickname: myNickname()

@@ -66,7 +66,7 @@ public class ChatStompController {
                 content
         );
         // 3) 브로드캐스트
-        messagingTemplate.convertAndSend("/topic/chat/rooms/" + req.getRoomId(), msg);
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + req.getRoomId(), ChatMessageResponse.from(msg));
     }
     @MessageMapping("/chat.leave")
     public void leave(ChatPresenceRequest req, SimpMessageHeaderAccessor headerAccessor) {
@@ -83,6 +83,6 @@ public class ChatStompController {
                 req.getNickname(),
                 content
         );
-        messagingTemplate.convertAndSend("/topic/chat/rooms/" + req.getRoomId(), msg);
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + req.getRoomId(), ChatMessageResponse.from(msg));
     }
 }
