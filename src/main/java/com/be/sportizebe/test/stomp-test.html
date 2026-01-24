@@ -413,7 +413,7 @@
         }
 
         const socket = new SockJS(
-            "http://localhost:8080/ws",
+            "http://localhost:8080/ws-stomp",
             null,
             { transports: ["xhr-streaming", "xhr-polling"] } // ✅ opCode=7 우회
         );
