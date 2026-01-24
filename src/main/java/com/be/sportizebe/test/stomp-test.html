@@ -461,8 +461,8 @@
         });
         stompClient.send("/app/chat.join", {}, JSON.stringify({
             roomId: Number(roomIdValue()),
-            userId: myUserId(),
-            nickname: myNickname()
+            senderUserId: myUserId(),
+            senderNickname: myNickname()
         }));
         setSub("subscribed: " + dest);
         debug("[SUBSCRIBED] " + dest);
@@ -503,8 +503,8 @@
         if (stompClient && stompClient.connected) {
             stompClient.send("/app/chat.leave", {}, JSON.stringify({
                 roomId: Number(roomIdValue()),
-                userId: myUserId(),
-                nickname: myNickname()
+                senderUserId: myUserId(),
+                senderNickname: myNickname()
             }));
         }
 
