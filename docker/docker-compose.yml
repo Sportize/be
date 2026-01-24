@@ -4,7 +4,7 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - .env
+      - ../.env
     environment:
       - TZ=Asia/Seoul
       - POSTGRES_USER=${POSTGRES_USER}
@@ -21,7 +21,7 @@ services:
     expose:
       - "8080"
     env_file:
-      - .env # 팀원들끼리만 공유
+      - ../.env # 팀원들끼리만 공유
     environment:
       - SPRING_PROFILES_ACTIVE=prod # 서브모듈 환경변수 prod 버전 인식
       - TZ=Asia/Seoul

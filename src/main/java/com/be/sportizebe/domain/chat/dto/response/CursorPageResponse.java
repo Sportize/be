@@ -1,8 +1,7 @@
-package com.be.sportizebe.domain.chat.dto;
+package com.be.sportizebe.domain.chat.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 

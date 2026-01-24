@@ -1,8 +1,7 @@
 package com.be.sportizebe.domain.chat.websocket;
-
-import com.be.sportizebe.domain.chat.dto.ChatMessageResponse;
 import com.be.sportizebe.domain.chat.dto.ChatPresenceRequest;
-import com.be.sportizebe.domain.chat.dto.ChatSendRequest;
+import com.be.sportizebe.domain.chat.dto.response.ChatMessageResponse;
+import com.be.sportizebe.domain.chat.dto.request.ChatSendRequest;
 import com.be.sportizebe.domain.chat.entity.ChatMessage;
 import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import com.be.sportizebe.domain.chat.service.ChatMessageService;

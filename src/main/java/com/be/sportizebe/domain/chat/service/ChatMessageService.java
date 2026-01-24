@@ -1,7 +1,7 @@
 package com.be.sportizebe.domain.chat.service;
 
-import com.be.sportizebe.domain.chat.dto.ChatMessageResponse;
-import com.be.sportizebe.domain.chat.dto.CursorPageResponse;
+import com.be.sportizebe.domain.chat.dto.response.ChatMessageResponse;
+import com.be.sportizebe.domain.chat.dto.response.CursorPageResponse;
 import com.be.sportizebe.domain.chat.entity.ChatMessage;
 import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import com.be.sportizebe.domain.chat.repository.ChatMessageRepository;
