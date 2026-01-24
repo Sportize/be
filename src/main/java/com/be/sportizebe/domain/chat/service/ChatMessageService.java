@@ -64,4 +64,28 @@ public class ChatMessageService {
                 .build();
 
     }
+    // 채팅이 아닌 시스템 메시지 전용!
+    @Transactional
+    public ChatMessage saveSystem(ChatRoom room, ChatMessage.Type type, String content) {
+        ChatMessage msg = ChatMessage.builder()
+                .room(room)
+                .senderUserId(0L)
+                .senderNickname("SYSTEM")
+                .type(type) // JOIN / LEAVE / SYSTEM
+                .content(content)
+                .build();
+
+        return messageRepository.save(msg);
+    }
+
+    @Transactional
+    public ChatMessage saveJoinLeave(ChatRoom room, ChatMessage.Type type, Long userId, String nickname, String content) {
+        return messageRepository.save(ChatMessage.builder()
+                .room(room)
+                .senderUserId(userId)
+                .senderNickname(nickname)
+                .type(type) // JOIN / LEAVE
+                .content(content)
+                .build());
+    }
 }

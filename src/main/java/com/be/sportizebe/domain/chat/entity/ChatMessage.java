@@ -87,4 +87,23 @@ public class ChatMessage {
                 .content(content)
                 .build();
     }
+    public static ChatMessage join(ChatRoom room, Long senderUserId, String senderNickname) {
+        return ChatMessage.builder()
+                .room(room)
+                .senderUserId(senderUserId)
+                .senderNickname(senderNickname)
+                .type(Type.JOIN)
+                .content(null)
+                .build();
+    }
+
+    public static ChatMessage leave(ChatRoom room, Long senderUserId, String senderNickname) {
+        return ChatMessage.builder()
+                .room(room)
+                .senderUserId(senderUserId)
+                .senderNickname(senderNickname)
+                .type(Type.LEAVE)
+                .content(null)
+                .build();
+    }
 }
