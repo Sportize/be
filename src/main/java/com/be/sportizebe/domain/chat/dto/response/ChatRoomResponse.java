@@ -1,4 +1,4 @@
-package com.be.sportizebe.domain.chat.dto;
+package com.be.sportizebe.domain.chat.dto.response;
 
 import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import lombok.Builder;

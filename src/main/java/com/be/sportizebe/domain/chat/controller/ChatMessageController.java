@@ -1,8 +1,8 @@
 package com.be.sportizebe.domain.chat.controller;
 
 
-import com.be.sportizebe.domain.chat.dto.ChatMessageResponse;
-import com.be.sportizebe.domain.chat.dto.CursorPageResponse;
+import com.be.sportizebe.domain.chat.dto.response.ChatMessageResponse;
+import com.be.sportizebe.domain.chat.dto.response.CursorPageResponse;
 import com.be.sportizebe.domain.chat.service.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

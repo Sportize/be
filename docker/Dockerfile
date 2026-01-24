@@ -4,7 +4,7 @@ FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
 # 소스 코드 복사
-COPY . .
+COPY .. .
 
 # 실행 권한 부여
 RUN chmod +x ./gradlew
