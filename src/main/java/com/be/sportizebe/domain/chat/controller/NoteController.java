@@ -29,7 +29,7 @@ public class NoteController {
     private final UserRepository userRepository; // TODO: 인증 로직 개발 후 제거
 
     @PostMapping("/rooms/{postId}")
-    @Operation(summary = "1대1 채팅방 생성", description = "게시글 작성자와 1대1 채팅방을 생성합니다. 채팅방 이름은 게시글 제목으로 설정됩니다. 이미 채팅방이 존재하면 기존 채팅방을 반환합니다.")
+    @Operation(summary = "1대1 채팅방 생성", description = "게시글 작성자와 1대1 쪽지 채팅방을 생성합니다. 채팅방 이름은 게시글 제목으로 설정됩니다. 이미 채팅방이 존재하면 기존 채팅방을 반환합니다.")
     public ResponseEntity<BaseResponse<ChatRoomResponse>> createChatRoom(
             @Parameter(description = "게시글 ID") @PathVariable Long postId) {
 
