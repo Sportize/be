@@ -50,6 +50,13 @@ dependencies {
 
     // AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // PostGIS 공간 타입 <-> JTS(Point 등) 매핑 지원
+    implementation "org.hibernate.orm:hibernate-spatial:6.4.8.Final"
+
+    // JTS
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+
 }
 
 tasks.named('test') {
