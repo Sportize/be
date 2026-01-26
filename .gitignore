@@ -38,3 +38,6 @@ src/main/resources/*.yml
 
 ### VS Code ###
 .vscode/
+
+## local docker compose
+docker/docker-compose.local.yml
