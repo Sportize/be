@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,33 +24,21 @@ public class LikeServiceImpl implements LikeService {
   @Override
   @Transactional
   public LikeResponse toggleLike(User user, LikeTargetType targetType, Long targetId) {
-//    Optional<Like> existingLike =
-//        likeRepository.findByUserAndTargetTypeAndTargetId(user, targetType, targetId);
 
-    boolean liked; // 좋아요 여부 변수
+    boolean liked = false; // 좋아요 여부 변수
 
-    try {
+    if(likeRepository.existsByUserAndTargetTypeAndTargetId(user, targetType, targetId)) {
+      likeRepository.deleteByUserAndTargetTypeAndTargetId(user, targetType, targetId);
+    } else {
       // 좋아요 추가
       Like like = Like.builder()
-          .user(user)
-          .targetType(targetType)
-          .targetId(targetId)
-          .build();
+        .user(user)
+        .targetType(targetType)
+        .targetId(targetId)
+        .build();
       likeRepository.save(like);
       liked = true;
-    } catch (DataIntegrityViolationException e) {
-      // 이미 존재 -> 토글 OFF
-      likeRepository.deleteByUserAndTargetTypeAndTargetId(user, targetType, targetId); // 취소 토글 시 DB에서 삭제
-      liked = false;
     }
-
-//    if (existingLike.isPresent()) { // isPresent(): 값이 존재하는지 확인하는 Optional클래스 메서드 (값 존재: true / 존재x : false)
-//      // 좋아요 취소
-//      likeRepository.delete(existingLike.get());
-//      liked = false;
-//    } else {
-//
-//    }
 
     long likeCount = getLikeCount(targetType, targetId); // 해당 타겟(게시물 or 댓글)의 좋아요 개수 저장 변수
 

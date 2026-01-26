@@ -2,7 +2,9 @@ package com.be.sportizebe.domain.chat.service;
 
 import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import com.be.sportizebe.domain.chat.entity.ChatRoomMember;
+import com.be.sportizebe.domain.chat.exception.ChatErrorCode;
 import com.be.sportizebe.domain.chat.repository.ChatRoomMemberRepository;
+import com.be.sportizebe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,7 @@ public class ChatMemberService {
     @Transactional
     public void leave(Long roomId, Long userId){
         ChatRoomMember member = memberRepository.findByRoom_IdAndUserId(roomId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("member not found"));
+                .orElseThrow(() -> new CustomException(ChatErrorCode.CHAT_MEMBER_NOT_FOUND));
         if (member.isActiveMember()) member.leave();
     }
 }
