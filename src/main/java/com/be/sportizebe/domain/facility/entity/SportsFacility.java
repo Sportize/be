@@ -1,5 +1,6 @@
 package com.be.sportizebe.domain.facility.entity;
 
+import com.be.sportizebe.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.locationtech.jts.geom.Point;
@@ -8,9 +9,9 @@ import org.locationtech.jts.geom.Point;
 @Table(name = "sports_facilities")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class SportsFacility {
+public class SportsFacility extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
