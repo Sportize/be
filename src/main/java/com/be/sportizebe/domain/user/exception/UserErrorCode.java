@@ -11,6 +11,7 @@ public enum UserErrorCode implements BaseErrorCode {
   EXAMPLE_ERROR_CODE("USER_0000", "예시 에러코드로 커스터마이징이 필요합니다.", HttpStatus.BAD_REQUEST),
 
   DUPLICATE_USERNAME("USER_0001", "이미 사용 중인 아이디입니다.", HttpStatus.BAD_REQUEST),
+  DUPLICATE_NICKNAME("USER_0001", "이미 사용 중인 닉네임입니다.", HttpStatus.BAD_REQUEST),
   INVALID_PASSWORD("USER_0002", "비밀번호가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
   IMAGE_UPLOAD_FAILED("USER_0003", "프로필 이미지 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_SAVE_FAILED("USER_0004", "회원 정보 저장에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
