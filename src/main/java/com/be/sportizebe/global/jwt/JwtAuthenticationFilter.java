@@ -1,9 +1,8 @@
-package com.be.sportizebe.global.security;
+package com.be.sportizebe.global.jwt;
 
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
-import com.be.sportizebe.global.jwt.JwtProvider;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (user != null) {
           UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(
-                  user,
+                  user, // User 엔티티를 직접 principal로 설정
                   null,
                   List.of(new SimpleGrantedAuthority(user.getRole().name())));
           SecurityContextHolder.getContext().setAuthentication(authentication);
