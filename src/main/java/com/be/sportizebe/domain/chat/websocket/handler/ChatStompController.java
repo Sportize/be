@@ -1,5 +1,6 @@
 package com.be.sportizebe.domain.chat.websocket;
-import com.be.sportizebe.domain.chat.dto.ChatPresenceRequest;
+
+import com.be.sportizebe.domain.chat.dto.request.ChatPresenceRequest;
 import com.be.sportizebe.domain.chat.dto.response.ChatMessageResponse;
 import com.be.sportizebe.domain.chat.dto.request.ChatSendRequest;
 import com.be.sportizebe.domain.chat.entity.ChatMessage;
@@ -20,7 +21,11 @@ public class ChatStompController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatSessionRegistry registry;
 
-    @MessageMapping("/chat.send")
+    /**
+     * 클라이언트가 SEND로 보낸 메세지를 받는 주소가 여기
+     * @param req -> payload
+     */
+    @MessageMapping("/chat.send") // STOMP -> SEND (@MessageMapping : SEND frame)
     public void send(ChatSendRequest req){
 
         ChatRoom room = chatRoomService.getOrThrow(req.getRoomId());
@@ -30,9 +35,15 @@ public class ChatStompController {
                 req.getSenderNickname(),
                 req.getContent()
         );
+
+        /**
+         * 채팅방을 구독 중인 모든 클라이언트에게 메시지를 뿌리는 로직
+         * messagingTemplate : 서버 → 클라이언트 메시지 전송용 객체, STOMP 브로커에게 메세지를 던지는 역할
+         * 객체 → 메시지로 바꿔서 → 목적지로 보낸다
+         */
         messagingTemplate.convertAndSend(
-                "/topic/chat/rooms/" + req.getRoomId(),
-                ChatMessageResponse.from(saved)
+            "/sub/chat/rooms/" + req.getRoomId(), // 채팅방 단위 브로드캐스트
+            ChatMessageResponse.from(saved)
         );
     }
 
@@ -55,7 +66,7 @@ public class ChatStompController {
                 content
         );
         // 3) 브로드캐스트
-        messagingTemplate.convertAndSend("/topic/chat/rooms/" + req.getRoomId(), msg);
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + req.getRoomId(), ChatMessageResponse.from(msg));
     }
     @MessageMapping("/chat.leave")
     public void leave(ChatPresenceRequest req, SimpMessageHeaderAccessor headerAccessor) {
@@ -72,6 +83,6 @@ public class ChatStompController {
                 req.getNickname(),
                 content
         );
-        messagingTemplate.convertAndSend("/topic/chat/rooms/" + req.getRoomId(), msg);
+        messagingTemplate.convertAndSend("/sub/chat/rooms/" + req.getRoomId(), ChatMessageResponse.from(msg));
     }
 }
