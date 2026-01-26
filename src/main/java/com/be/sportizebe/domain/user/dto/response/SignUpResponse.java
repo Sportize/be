@@ -12,9 +12,12 @@ public record SignUpResponse(
     String username,
 
     @Schema(description = "사용자 권한", example = "USER")
-    Role role
+    Role role,
+
+    @Schema(description = "사용자 별명", example = "스포티")
+    String nickName
 ) {
     public static SignUpResponse from(User user) {
-        return new SignUpResponse(user.getId(), user.getUsername(), user.getRole());
+        return new SignUpResponse(user.getId(), user.getUsername(), user.getRole(), user.getNickname());
     }
 }

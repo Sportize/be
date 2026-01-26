@@ -14,6 +14,10 @@ public record SignUpRequest(
     @Schema(description = "비밀번호", example = "password123")
     @NotBlank(message = "비밀번호를 입력해주세요.")
     // @Size(min = 8, message = "비밀번호는 8자 이상이어야 합니다.")
-    String password
+    String password,
+
+    @Schema(description = "닉네임", example = "스포티")
+    @NotBlank(message = "사용할 닉네임을 입력해주세요.")
+    String nickName
 ) {
 }
