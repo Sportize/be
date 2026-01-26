@@ -10,5 +10,6 @@ public class FacilityNearResponse {
     private String facilityName;
     private String introduce;
     private String thumbnailUrl;
+    private String facilityType;
     private int distanceM; // 프론트에서 보기 쉽게 미터 int로
 }

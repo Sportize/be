@@ -19,8 +19,10 @@ public class SportsFacilityController {
             @RequestParam double lat,
             @RequestParam double lng,
             @RequestParam(defaultValue = "3000") int radiusM,
-            @RequestParam(defaultValue = "50") int limit
+            @RequestParam(defaultValue = "50") int limit,
+            @RequestParam(required = false) String type
+
     ) {
-        return sportsFacilityService.getNear(lat, lng, radiusM, limit);
+        return sportsFacilityService.getNear(lat, lng, radiusM, limit, type);
     }
 }

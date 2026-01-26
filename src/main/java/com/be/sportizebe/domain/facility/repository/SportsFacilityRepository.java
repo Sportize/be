@@ -8,12 +8,14 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface SportsFacilityRepository extends JpaRepository<SportsFacility, Long> {
+
     @Query(value = """
         SELECT
             sf.id AS id,
             sf.facility_name AS facilityName,
             sf.introduce AS introduce,
             sf.thumbnail_url AS thumbnailUrl,
+            sf.facility_type AS facilityType,
             ST_Distance(
                 sf.location,
                 ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
@@ -24,13 +26,15 @@ public interface SportsFacilityRepository extends JpaRepository<SportsFacility, 
             ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
             :radiusM
         )
-        ORDER BY distanceM ASC
+        AND (:type IS NULL OR sf.facility_type = :type)
+        ORDER BY distanceM
         LIMIT :limit
         """, nativeQuery = true)
     List<FacilityNearProjection> findNear(
             @Param("lat") double lat,
             @Param("lng") double lng,
-            @Param("radiusM") int radiusM,
-            @Param("limit") int limit
+            @Param("radiusM") long radiusM,
+            @Param("limit") int limit,
+            @Param("type") String type
     );
 }
