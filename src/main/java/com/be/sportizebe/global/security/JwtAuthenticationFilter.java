@@ -1,5 +1,8 @@
 package com.be.sportizebe.global.security;
 
+import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.repository.UserRepository;
+import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.jwt.JwtProvider;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -9,13 +12,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,27 +28,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final String BEARER_PREFIX = "Bearer ";
 
   private final JwtProvider jwtProvider;
-  private final UserDetailsService userDetailsService;
+  private final UserRepository userRepository;
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     try {
-      String token = resolveToken(request); // Http 요청에 담긴 토큰을 추출하여 저장
+      String token = resolveToken(request);
 
+      // TODO: AccessToken과 RefreshToken 구분해서 검증하는 로직 필요함
       if (token != null && jwtProvider.validateToken(token)) {
-        String socialId = jwtProvider.extractSocialId(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(socialId);
+        Long userId = Long.parseLong(jwtProvider.extractSocialId(token));
+        User user = userRepository.findById(userId)
+            .orElse(null);
 
-        UsernamePasswordAuthenticationToken authentication =
-            new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (user != null) {
+          UsernamePasswordAuthenticationToken authentication =
+              new UsernamePasswordAuthenticationToken(
+                  user,
+                  null,
+                  List.of(new SimpleGrantedAuthority(user.getRole().name())));
+          SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        log.debug("SecurityContext에 '{}' 인증 정보를 저장했습니다.", socialId);
+          log.debug("SecurityContext에 '{}' 인증 정보를 저장했습니다.", userId);
+        }
       }
-    } catch (JwtException | IllegalArgumentException e) {
+    } catch (CustomException | JwtException | IllegalArgumentException e) {
       log.error("JWT 검증 실패 : {}", e.getMessage());
       SecurityContextHolder.clearContext();
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT token");
@@ -54,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private String resolveToken(HttpServletRequest request) { // Http 요청의 헤더에서 JWT 토큰을 추출함
+  private String resolveToken(HttpServletRequest request) {
     String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
     log.debug("Authorization Header : {}", bearerToken);
     if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
