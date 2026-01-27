@@ -1,8 +1,10 @@
 package com.be.sportizebe.domain.facility.service;
 
-import com.be.sportizebe.domain.facility.dto.FacilityNearResponse;
+import com.be.sportizebe.domain.facility.dto.request.FacilityMarkerRequest;
+import com.be.sportizebe.domain.facility.dto.request.FacilityNearRequest;
+import com.be.sportizebe.domain.facility.dto.response.FacilityMarkerResponse;
+import com.be.sportizebe.domain.facility.dto.response.FacilityNearResponse;
 import com.be.sportizebe.domain.facility.mapper.FacilityMapper;
-import com.be.sportizebe.domain.facility.repository.FacilityNearProjection;
 import com.be.sportizebe.domain.facility.repository.SportsFacilityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,23 +19,34 @@ public class SportsFacilityService {
 
     private final SportsFacilityRepository sportsFacilityRepository;
 
-    public List<FacilityNearResponse> getNear(
-            double lat,
-            double lng,
-            long radiusM,
-            int limit,
-            String type
-    ) {
-        if (radiusM <= 0) radiusM = 1000;
-        if (radiusM > 20000) radiusM = 20000;
-        if (limit <= 0) limit = 50;
-        if (limit > 200) limit = 200;
+    public List<FacilityNearResponse> getNear(FacilityNearRequest request) {
+        String type = (request.getType() == null) ? null : request.getType().name();
 
-        List<FacilityNearProjection> rows =
-                sportsFacilityRepository.findNear(lat, lng, radiusM, limit, type);
+        var list = sportsFacilityRepository.findNear(
+                request.getLat(),
+                request.getLng(),
+                request.getRadiusM(),
+                request.getLimit(),
+                type
+        );
 
-        return rows.stream()
+        return list.stream()
                 .map(FacilityMapper::toNearResponse)
+                .toList();
+    }
+    public List<FacilityMarkerResponse> getMarkers(FacilityMarkerRequest request) {
+        String type = (request.getType() == null) ? null : request.getType().name(); // ✅ enum -> String
+
+        var list = sportsFacilityRepository.findMarkersNear(
+                request.getLat(),
+                request.getLng(),
+                request.getRadiusM(),
+                request.getLimit(),
+                type
+        );
+
+        return list.stream()
+                .map(FacilityMapper::toMarkerResponse)
                 .toList();
     }
 }
