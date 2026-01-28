@@ -1,4 +1,4 @@
-package com.be.sportizebe.global.aop;
+package com.be.sportizebe.aop;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
