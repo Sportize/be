@@ -12,6 +12,8 @@ import com.be.sportizebe.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -59,5 +61,11 @@ public class PostServiceImpl implements PostService {
     }
 
     postRepository.delete(post);
+  }
+
+  @Override
+  public Page<PostResponse> getPosts(PostProperty property, Pageable pageable) {
+    return postRepository.findByProperty(property, pageable)
+        .map(PostResponse::from);
   }
 }

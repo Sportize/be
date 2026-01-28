@@ -12,7 +12,7 @@ public record CreatePostRequest(
     @NotBlank(message = "내용은 필수입니다.") String content,
     boolean isAnonymous,
     String imgUrl) {
-
+// TODO : S3 세팅 후 imgUrl은 multipartform으로 변경
   public Post toEntity(PostProperty property, User user) { // DTO -> Entity 변환
     return Post.builder()
         .title(title)

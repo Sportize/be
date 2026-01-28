@@ -5,6 +5,8 @@ import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
 import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PostService {
   PostResponse createPost(PostProperty property, CreatePostRequest request, User user); // 게시글 생성
@@ -12,4 +14,6 @@ public interface PostService {
   PostResponse updatePost(Long postId, UpdatePostRequest request, User user); // 게시글 수정
 
   void deletePost(Long postId, User user); // 게시글 삭제
+
+  Page<PostResponse> getPosts(PostProperty property, Pageable pageable); // 게시글 목록 조회
 }

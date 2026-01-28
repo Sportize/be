@@ -12,6 +12,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -53,5 +57,14 @@ public class PostController {
         @AuthenticationPrincipal User user) {
         postService.deletePost(postId, user);
         return ResponseEntity.ok(BaseResponse.success("게시글 삭제 성공", null));
+    }
+
+    @GetMapping("/posts/{property}")
+    @Operation(summary = "게시글 목록 조회", description = "게시판 종류별 게시글 목록을 페이징하여 조회합니다.")
+    public ResponseEntity<BaseResponse<Page<PostResponse>>> getPosts(
+        @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
+        @Parameter(hidden = true) @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<PostResponse> response = postService.getPosts(property, pageable);
+        return ResponseEntity.ok(BaseResponse.success("게시글 목록 조회 성공", response));
     }
 }

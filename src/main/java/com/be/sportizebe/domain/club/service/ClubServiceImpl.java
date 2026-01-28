@@ -1,0 +1,75 @@
+package com.be.sportizebe.domain.club.service;
+
+import com.be.sportizebe.domain.chat.service.ChatRoomService;
+import com.be.sportizebe.domain.club.dto.request.ClubCreateRequest;
+import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
+import com.be.sportizebe.domain.club.dto.response.ClubResponse;
+import com.be.sportizebe.domain.club.entity.Club;
+import com.be.sportizebe.domain.club.entity.ClubMember;
+import com.be.sportizebe.domain.club.exception.ClubErrorCode;
+import com.be.sportizebe.domain.club.repository.ClubMemberRepository;
+import com.be.sportizebe.domain.club.repository.ClubRepository;
+import com.be.sportizebe.domain.user.entity.SportType;
+import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.global.exception.CustomException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class ClubServiceImpl implements ClubService {
+
+  private final ClubRepository clubRepository;
+  private final ChatRoomService chatRoomService;
+  private final ClubMemberRepository clubMemberRepository;
+
+  @Override
+  @Transactional
+  public ClubResponse createClub(ClubCreateRequest request, User user) {
+    if (clubRepository.existsByName(request.name())) {
+      throw new CustomException(ClubErrorCode.CLUB_NAME_DUPLICATED);
+    }
+
+    // 동호회 엔티티 생성
+    Club club = request.toEntity(user);
+    clubRepository.save(club);
+
+    // 동호회 멤버 테이블에 방장(동호회 생성자) 추가
+    ClubMember leaderMember = ClubMember.builder()
+        .club(club)
+        .user(user)
+        .role(ClubMember.ClubRole.LEADER)
+        .build();
+    clubMemberRepository.save(leaderMember);
+
+    // 동호회 단체 채팅방 생성
+    chatRoomService.createGroup(club);
+
+    return ClubResponse.from(club);
+  }
+
+  @Override
+  @Transactional
+  public ClubResponse updateClub(Long clubId, ClubUpdateRequest request, User user) {
+    Club club = clubRepository.findById(clubId)
+        .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
+
+    if (club.getLeader().getId() != user.getId()) {
+      throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
+    }
+
+    if (!club.getName().equals(request.name()) && clubRepository.existsByName(request.name())) {
+      throw new CustomException(ClubErrorCode.CLUB_NAME_DUPLICATED);
+    }
+
+    if (request.maxMembers() != null && request.maxMembers() < club.getMembers().size()) {
+      throw new CustomException(ClubErrorCode.CLUB_MAX_MEMBERS_TOO_SMALL);
+    }
+
+    club.update(request.name(), request.introduce(), request.maxMembers(), request.clubType());
+
+    return ClubResponse.from(club);
+  }
+}
