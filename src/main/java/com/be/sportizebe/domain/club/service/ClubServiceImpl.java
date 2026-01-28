@@ -36,6 +36,7 @@ public class ClubServiceImpl implements ClubService {
     Club club = request.toEntity(user);
     clubRepository.save(club);
 
+    // 동호회 멤버 테이블에 방장(동호회 생성자) 추가
     ClubMember leaderMember = ClubMember.builder()
         .club(club)
         .user(user)
@@ -67,7 +68,7 @@ public class ClubServiceImpl implements ClubService {
       throw new CustomException(ClubErrorCode.CLUB_MAX_MEMBERS_TOO_SMALL);
     }
 
-    club.update(request.name(), request.introduce(), request.maxMembers());
+    club.update(request.name(), request.introduce(), request.maxMembers(), request.clubType());
 
     return ClubResponse.from(club);
   }

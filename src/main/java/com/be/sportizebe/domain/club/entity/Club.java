@@ -31,6 +31,10 @@ public class Club extends BaseTimeEntity {
   private String introduce; // 동호회 소개글
 
   @Column(nullable = false)
+  @Enumerated(EnumType.STRING)
+  private SportType clubType; // 동호회 관련 종목 (동호회 생성 시 선택)
+
+  @Column(nullable = false)
   private Integer maxMembers; // 최대 정원
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -44,9 +48,10 @@ public class Club extends BaseTimeEntity {
   @Builder.Default
   private List<ClubMember> members = new ArrayList<>();
 
-  public void update(String name, String introduce, Integer maxMembers) {
+  public void update(String name, String introduce, Integer maxMembers, SportType clubType) {
     this.name = name;
     this.introduce = introduce;
     this.maxMembers = maxMembers;
+    this.clubType = clubType;
   }
 }
