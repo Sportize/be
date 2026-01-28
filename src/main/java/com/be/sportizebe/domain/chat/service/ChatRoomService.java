@@ -21,7 +21,6 @@ public class ChatRoomService {
     @Transactional
     public ChatRoom createGroup(String name) {
         ChatRoom room = ChatRoom.builder()
-                .name(name)
                 .chatRoomType(ChatRoom.ChatRoomType.GROUP)
                 .build();
         return chatRoomRepository.save(room);
@@ -37,14 +36,11 @@ public class ChatRoomService {
         }
 
         // 이미 존재하는 채팅방이 있으면 반환
-        return chatRoomRepository.findByPostAndHostUserAndGuestUser(post, hostUser, guestUser)
+        return chatRoomRepository.findByPostAndGuestUser(post, guestUser)
                 .orElseGet(() -> {
                     ChatRoom room = ChatRoom.builder()
-                            .name(post.getTitle())
                             .chatRoomType(ChatRoom.ChatRoomType.NOTE)
-                            .maxMembers(2)
                             .post(post)
-                            .hostUser(hostUser)
                             .guestUser(guestUser)
                             .build();
                     return chatRoomRepository.save(room);
@@ -53,7 +49,7 @@ public class ChatRoomService {
 
     // 사용자가 참여한 1대1 채팅방 목록 조회
     public List<ChatRoom> findMyNoteRooms(User user) {
-        return chatRoomRepository.findByHostUserOrGuestUser(user, user);
+        return chatRoomRepository.findByPost_UserOrGuestUser(user, user);
     }
 
     public List<ChatRoom> findAll() {

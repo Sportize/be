@@ -29,6 +29,7 @@ public class ClubServiceImpl implements ClubService {
       throw new CustomException(ClubErrorCode.CLUB_NAME_DUPLICATED);
     }
 
+
     Club club = request.toEntity(sportType, user);
     clubRepository.save(club);
 

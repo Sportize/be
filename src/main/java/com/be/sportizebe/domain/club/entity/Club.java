@@ -1,5 +1,6 @@
 package com.be.sportizebe.domain.club.entity;
 
+import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import com.be.sportizebe.domain.user.entity.SportType;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.common.BaseTimeEntity;
@@ -39,6 +40,9 @@ public class Club extends BaseTimeEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "leader_id", nullable = false)
   private User leader; // 동호회장
+
+  @OneToOne(mappedBy = "club", fetch = FetchType.LAZY)
+  private ChatRoom chatRoom; // 동호회 채팅방
 
   @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default

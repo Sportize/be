@@ -11,7 +11,6 @@ public class ChatRoomResponse {
     private String name;
     private boolean active;
     private String chatRoomType;
-    private Integer maxMembers;
 
     // 1대1 채팅방(쪽지)용 필드
     private Long postId;
@@ -23,19 +22,20 @@ public class ChatRoomResponse {
     public static ChatRoomResponse from(ChatRoom r) {
         ChatRoomResponseBuilder builder = ChatRoomResponse.builder()
                 .roomId(r.getId())
-                .name(r.getName())
                 .active(r.isActive())
-                .chatRoomType(r.getChatRoomType() != null ? r.getChatRoomType().name() : null)
-                .maxMembers(r.getMaxMembers());
+                .chatRoomType(r.getChatRoomType() != null ? r.getChatRoomType().name() : null);
 
-        // 1대1 채팅방인 경우 추가 정보 설정
-        if (r.getPost() != null) {
+        // 타입별 name 파생
+        if (r.getChatRoomType() == ChatRoom.ChatRoomType.NOTE && r.getPost() != null) {
+            builder.name(r.getPost().getTitle());
             builder.postId(r.getPost().getId());
+            // hostUser는 게시글 작성자로 파생
+            builder.hostUserId(r.getPost().getUser().getId())
+                   .hostUsername(r.getPost().getUser().getUsername());
+        } else if (r.getChatRoomType() == ChatRoom.ChatRoomType.GROUP && r.getClub() != null) {
+            builder.name(r.getClub().getName());
         }
-        if (r.getHostUser() != null) {
-            builder.hostUserId(r.getHostUser().getId())
-                   .hostUsername(r.getHostUser().getUsername());
-        }
+
         if (r.getGuestUser() != null) {
             builder.guestUserId(r.getGuestUser().getId())
                    .guestUsername(r.getGuestUser().getUsername());
