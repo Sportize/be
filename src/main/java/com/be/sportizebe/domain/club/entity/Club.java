@@ -43,4 +43,10 @@ public class Club extends BaseTimeEntity {
   @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<ClubMember> members = new ArrayList<>();
+
+  public void update(String name, String introduce, Integer maxMembers) {
+    this.name = name;
+    this.introduce = introduce;
+    this.maxMembers = maxMembers;
+  }
 }

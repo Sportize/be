@@ -2,6 +2,7 @@ package com.be.sportizebe.domain.club.service;
 
 import com.be.sportizebe.domain.chat.service.ChatRoomService;
 import com.be.sportizebe.domain.club.dto.request.ClubCreateRequest;
+import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
 import com.be.sportizebe.domain.club.dto.response.ClubResponse;
 import com.be.sportizebe.domain.club.entity.Club;
 import com.be.sportizebe.domain.club.entity.ClubMember;
@@ -44,6 +45,29 @@ public class ClubServiceImpl implements ClubService {
 
     // 동호회 단체 채팅방 생성
     chatRoomService.createGroup(club);
+
+    return ClubResponse.from(club);
+  }
+
+  @Override
+  @Transactional
+  public ClubResponse updateClub(Long clubId, ClubUpdateRequest request, User user) {
+    Club club = clubRepository.findById(clubId)
+        .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
+
+    if (club.getLeader().getId() != user.getId()) {
+      throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
+    }
+
+    if (!club.getName().equals(request.name()) && clubRepository.existsByName(request.name())) {
+      throw new CustomException(ClubErrorCode.CLUB_NAME_DUPLICATED);
+    }
+
+    if (request.maxMembers() != null && request.maxMembers() < club.getMembers().size()) {
+      throw new CustomException(ClubErrorCode.CLUB_MAX_MEMBERS_TOO_SMALL);
+    }
+
+    club.update(request.name(), request.introduce(), request.maxMembers());
 
     return ClubResponse.from(club);
   }

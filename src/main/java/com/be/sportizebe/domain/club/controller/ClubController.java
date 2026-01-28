@@ -1,6 +1,7 @@
 package com.be.sportizebe.domain.club.controller;
 
 import com.be.sportizebe.domain.club.dto.request.ClubCreateRequest;
+import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
 import com.be.sportizebe.domain.club.dto.response.ClubResponse;
 import com.be.sportizebe.domain.club.service.ClubServiceImpl;
 import com.be.sportizebe.domain.user.entity.SportType;
@@ -24,7 +25,7 @@ public class ClubController {
 
   private final ClubServiceImpl clubService;
 
-  @PostMapping("/{sportType}")
+  @PostMapping("")
   @Operation(summary = "동호회 생성", description = "종목별 동호회를 생성합니다. 생성한 사용자가 동호회장이 됩니다.")
   public ResponseEntity<BaseResponse<ClubResponse>> createClub(
       @RequestBody @Valid ClubCreateRequest request,
@@ -32,5 +33,15 @@ public class ClubController {
     ClubResponse response = clubService.createClub(request, user);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(BaseResponse.success("동호회 생성 성공", response));
+  }
+
+  @PutMapping("/{clubId}")
+  @Operation(summary = "동호회 수정", description = "동호회 정보를 수정합니다. 동호회장만 수정할 수 있습니다.")
+  public ResponseEntity<BaseResponse<ClubResponse>> updateClub(
+      @PathVariable Long clubId,
+      @RequestBody @Valid ClubUpdateRequest request,
+      @AuthenticationPrincipal User user) {
+    ClubResponse response = clubService.updateClub(clubId, request, user);
+    return ResponseEntity.ok(BaseResponse.success("동호회 수정 성공", response));
   }
 }
