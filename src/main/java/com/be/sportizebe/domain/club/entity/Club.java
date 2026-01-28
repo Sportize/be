@@ -25,14 +25,10 @@ public class Club extends BaseTimeEntity {
   private Long id;
 
   @Column(nullable = false, unique = true)
-  private String name; // 동호회 이름
+  private String name; // 동호회 이름 == 단테 채팅방 이름
 
   @Column(columnDefinition = "TEXT")
   private String introduce; // 동호회 소개글
-
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private SportType sportType; // 동호회의 종목
 
   @Column(nullable = false)
   private Integer maxMembers; // 최대 정원

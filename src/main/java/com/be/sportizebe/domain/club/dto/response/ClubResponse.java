@@ -11,7 +11,6 @@ public record ClubResponse(
     @Schema(description = "동호회 ID", example = "1") Long clubId,
     @Schema(description = "동호회 이름", example = "축구 동호회") String name,
     @Schema(description = "동호회 소개", example = "매주 토요일 축구합니다") String introduce,
-    @Schema(description = "종목", example = "SOCCER") SportType sportType,
     @Schema(description = "최대 정원", example = "20") Integer maxMembers,
     @Schema(description = "동호회장 닉네임", example = "닉네임") String leaderNickname) {
 
@@ -20,7 +19,6 @@ public record ClubResponse(
         .clubId(club.getId())
         .name(club.getName())
         .introduce(club.getIntroduce())
-        .sportType(club.getSportType())
         .maxMembers(club.getMaxMembers())
         .leaderNickname(club.getLeader().getNickname())
         .build();

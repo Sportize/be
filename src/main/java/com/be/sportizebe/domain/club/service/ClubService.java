@@ -6,5 +6,5 @@ import com.be.sportizebe.domain.user.entity.SportType;
 import com.be.sportizebe.domain.user.entity.User;
 
 public interface ClubService {
-  ClubResponse createClub(SportType sportType, ClubCreateRequest request, User user); // 동호회 생성
+  ClubResponse createClub(ClubCreateRequest request, User user); // 동호회 생성
 }

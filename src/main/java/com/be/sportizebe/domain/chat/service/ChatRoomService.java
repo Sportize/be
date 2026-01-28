@@ -3,6 +3,7 @@ package com.be.sportizebe.domain.chat.service;
 import com.be.sportizebe.domain.chat.entity.ChatRoom;
 import com.be.sportizebe.domain.chat.exception.ChatErrorCode;
 import com.be.sportizebe.domain.chat.repository.ChatRoomRepository;
+import com.be.sportizebe.domain.club.entity.Club;
 import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.exception.CustomException;
@@ -19,10 +20,11 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
-    public ChatRoom createGroup(String name) {
+    public ChatRoom createGroup(Club club) {
         ChatRoom room = ChatRoom.builder()
-                .chatRoomType(ChatRoom.ChatRoomType.GROUP)
-                .build();
+          .chatRoomType(ChatRoom.ChatRoomType.GROUP)
+          .club(club)
+        .build();
         return chatRoomRepository.save(room);
     }
 

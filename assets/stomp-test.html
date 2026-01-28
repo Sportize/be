@@ -413,7 +413,7 @@
         }
 
         const socket = new SockJS(
-            "http://localhost:8080/ws",
+            "http://localhost:8080/ws-stomp",
             null,
             { transports: ["xhr-streaming", "xhr-polling"] } // ✅ opCode=7 우회
         );
@@ -442,7 +442,7 @@
         }
 
         const rid = roomIdValue();
-        const dest = `/topic/chat/rooms/${rid}`;
+        const dest = `/sub/chat/rooms/${rid}`;
         $("roomTitle").textContent = `room: ${rid}`;
 
         currentSub = stompClient.subscribe(dest, (frame) => {
@@ -459,10 +459,10 @@
                 });
             }
         });
-        stompClient.send("/app/chat.join", {}, JSON.stringify({
+        stompClient.send("/pub/chat.join", {}, JSON.stringify({
             roomId: Number(roomIdValue()),
-            userId: myUserId(),
-            nickname: myNickname()
+            senderUserId: myUserId(),
+            senderNickname: myNickname()
         }));
         setSub("subscribed: " + dest);
         debug("[SUBSCRIBED] " + dest);
@@ -490,7 +490,7 @@
             content: text
         };
 
-        stompClient.send("/app/chat.send", {}, JSON.stringify(payload));
+        stompClient.send("/pub/chat.send", {}, JSON.stringify(payload));
         debug("[SENT] " + JSON.stringify(payload));
 
         contentEl.value = "";
@@ -501,10 +501,10 @@
 
         // 🔽 여기 먼저
         if (stompClient && stompClient.connected) {
-            stompClient.send("/app/chat.leave", {}, JSON.stringify({
+            stompClient.send("/pub/chat.leave", {}, JSON.stringify({
                 roomId: Number(roomIdValue()),
-                userId: myUserId(),
-                nickname: myNickname()
+                senderUserId: myUserId(),
+                senderNickname: myNickname()
             }));
         }
 

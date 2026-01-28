@@ -27,10 +27,9 @@ public class ClubController {
   @PostMapping("/{sportType}")
   @Operation(summary = "동호회 생성", description = "종목별 동호회를 생성합니다. 생성한 사용자가 동호회장이 됩니다.")
   public ResponseEntity<BaseResponse<ClubResponse>> createClub(
-      @Parameter(description = "종목 (SOCCER, BASKETBALL)") @PathVariable SportType sportType,
       @RequestBody @Valid ClubCreateRequest request,
       @AuthenticationPrincipal User user) {
-    ClubResponse response = clubService.createClub(sportType, request, user);
+    ClubResponse response = clubService.createClub(request, user);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(BaseResponse.success("동호회 생성 성공", response));
   }
