@@ -1,6 +1,7 @@
 package com.be.sportizebe.domain.user.controller;
 
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
+import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
 import com.be.sportizebe.domain.user.service.UserServiceImpl;
 import com.be.sportizebe.global.response.BaseResponse;
@@ -9,11 +10,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,5 +29,15 @@ public class UserController {
         SignUpResponse response = userService.signUp(request);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("회원가입 성공", response));
+    }
+
+    @PostMapping(value = "/{userId}/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "프로필 사진 업로드", description = "사용자 프로필 사진을 업로드합니다. (최대 5MB, jpg/jpeg/png/gif/webp 지원)")
+    public ResponseEntity<BaseResponse<ProfileImageResponse>> uploadProfileImage(
+        @PathVariable Long userId,
+        @RequestPart("file") MultipartFile file
+    ) {
+        ProfileImageResponse response = userService.uploadProfileImage(userId, file);
+        return ResponseEntity.ok(BaseResponse.success("프로필 사진 업로드 성공", response));
     }
 }
