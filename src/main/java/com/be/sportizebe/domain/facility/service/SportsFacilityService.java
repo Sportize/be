@@ -4,49 +4,16 @@ import com.be.sportizebe.domain.facility.dto.request.FacilityMarkerRequest;
 import com.be.sportizebe.domain.facility.dto.request.FacilityNearRequest;
 import com.be.sportizebe.domain.facility.dto.response.FacilityMarkerResponse;
 import com.be.sportizebe.domain.facility.dto.response.FacilityNearResponse;
-import com.be.sportizebe.domain.facility.mapper.FacilityMapper;
-import com.be.sportizebe.domain.facility.repository.SportsFacilityRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class SportsFacilityService {
+public interface SportsFacilityService {
 
-    private final SportsFacilityRepository sportsFacilityRepository;
+    List<FacilityNearResponse> getNear(FacilityNearRequest request); // 현재 위치 기준 반경 내 체육시설을 거리순으로 조히
+    // @Param: request 위치, 반경, 종목 등의 조회 조건
+    // @return: 체육시설 상세 목록
 
-    public List<FacilityNearResponse> getNear(FacilityNearRequest request) {
-        String type = (request.getType() == null) ? null : request.getType().name();
-
-        var list = sportsFacilityRepository.findNear(
-                request.getLat(),
-                request.getLng(),
-                request.getRadiusM(),
-                request.getLimit(),
-                type
-        );
-
-        return list.stream()
-                .map(FacilityMapper::toNearResponse)
-                .toList();
-    }
-    public List<FacilityMarkerResponse> getMarkers(FacilityMarkerRequest request) {
-        String type = (request.getType() == null) ? null : request.getType().name(); // ✅ enum -> String
-
-        var list = sportsFacilityRepository.findMarkersNear(
-                request.getLat(),
-                request.getLng(),
-                request.getRadiusM(),
-                request.getLimit(),
-                type
-        );
-
-        return list.stream()
-                .map(FacilityMapper::toMarkerResponse)
-                .toList();
-    }
+    List<FacilityMarkerResponse> getMarkers(FacilityMarkerRequest request); // 지도 중심 좌표 기준 반경 내 체육시설 마커 목록 조회
+    // @Param: request 지도 중심 좌표, 반경, 종목 등의 조회 조건
+    // @return: 지도 마커용 체육시설 목록
 }

@@ -1,6 +1,7 @@
 // src/main/java/com/be/sportizebe/domain/facility/dto/request/FacilityMarkerRequest.java
 package com.be.sportizebe.domain.facility.dto.request;
 
+import com.be.sportizebe.domain.facility.dto.CacheKeyProvider;
 import com.be.sportizebe.domain.facility.entity.FacilityType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -9,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class FacilityMarkerRequest {
+public class FacilityMarkerRequest implements CacheKeyProvider {
 
     @Schema(description = "지도 중심 위도", example = "37.2869", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "지도 중심 위도(centerLat)는 필수입니다")
@@ -35,4 +36,14 @@ public class FacilityMarkerRequest {
 
     @Schema(description = "종목 필터(선택)", example = "SOCCER", nullable = true)
     private FacilityType type;
+
+    @Override
+    public String generateCacheKey() {
+        double gridLat = Math.round(this.lat * 10000) / 10000.0;
+        double gridLng = Math.round(this.lng * 10000) / 10000.0;
+        String typeName = (type == null) ? "ALL" : type.name();
+
+        return String.format("%.4f:%.4f:%d:%d:%s",
+                gridLat, gridLng, radiusM, limit, typeName);
+    }
 }
