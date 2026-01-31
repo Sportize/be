@@ -2,6 +2,7 @@ package com.be.sportizebe.domain.post.service;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
+import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
 import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.user.entity.User;
@@ -15,5 +16,5 @@ public interface PostService {
 
   void deletePost(Long postId, User user); // 게시글 삭제
 
-  Page<PostResponse> getPosts(PostProperty property, Pageable pageable); // 게시글 목록 조회
+  PostPageResponse getPosts(PostProperty property, Pageable pageable); // 게시글 목록 조회
 }

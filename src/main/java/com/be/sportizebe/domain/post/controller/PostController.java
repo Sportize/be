@@ -2,6 +2,7 @@ package com.be.sportizebe.domain.post.controller;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
+import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
 import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.post.service.PostService;
@@ -61,10 +62,10 @@ public class PostController {
 
     @GetMapping("/posts/{property}")
     @Operation(summary = "게시글 목록 조회", description = "게시판 종류별 게시글 목록을 페이징하여 조회합니다.")
-    public ResponseEntity<BaseResponse<Page<PostResponse>>> getPosts(
+    public ResponseEntity<BaseResponse<PostPageResponse>> getPosts(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
         @Parameter(hidden = true) @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<PostResponse> response = postService.getPosts(property, pageable);
+        PostPageResponse response = postService.getPosts(property, pageable);
         return ResponseEntity.ok(BaseResponse.success("게시글 목록 조회 성공", response));
     }
 }
