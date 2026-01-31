@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PathName {
   @Schema(description = "프로필 사진")
-  PROFILE("profile"),
+  PROFILE,
   @Schema(description = "동호회 사진")
-  CLUB("club");
-
-  private final String folder;
+  CLUB,
+  @Schema(description = "게시글 사진")
+  POST;
 }

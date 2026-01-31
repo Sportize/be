@@ -22,6 +22,9 @@ public class S3Config {
   @Value("${spring.cloud.aws.s3.path.club}")
   private String club;
 
+  @Value("${spring.cloud.aws.s3.path.post}")
+  private String post;
+
   @Value("${spring.cloud.aws.credentials.access-key}")
   private String accessKey;
 

@@ -91,6 +91,7 @@ public class S3ServiceImpl implements S3Service {
     return switch (pathName) {
       case PROFILE -> s3Config.getProfile();
       case CLUB -> s3Config.getClub();
+      case POST -> s3Config.getPost();
     }
     + "/" + UUID.randomUUID() + extension;
   }

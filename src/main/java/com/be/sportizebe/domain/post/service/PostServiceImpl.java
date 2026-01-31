@@ -9,12 +9,15 @@ import com.be.sportizebe.domain.post.exception.PostErrorCode;
 import com.be.sportizebe.domain.post.repository.PostRepository;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.exception.CustomException;
+import com.be.sportizebe.global.s3.enums.PathName;
+import com.be.sportizebe.global.s3.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -22,15 +25,22 @@ import org.springframework.stereotype.Service;
 public class PostServiceImpl implements PostService {
 
   private final PostRepository postRepository;
+  private final S3Service s3Service;
 
   @Override
   @Transactional
-  public PostResponse createPost(PostProperty property, CreatePostRequest request, User user) {
-    Post post = request.toEntity(property, user); // 요청 dto 데이터를 entity로 변환
+  public PostResponse createPost(PostProperty property, CreatePostRequest request, MultipartFile image, User user) {
+    // 이미지가 있으면 S3에 업로드
+    String imgUrl = null;
+    if (image != null && !image.isEmpty()) {
+      imgUrl = s3Service.uploadFile(PathName.POST, image);
+    }
 
-    Post savedPost = postRepository.save(post); // db에 저장
+    Post post = request.toEntity(property, user, imgUrl);
 
-    return PostResponse.from(savedPost); // entity를 dto로 변환하여 응답
+    Post savedPost = postRepository.save(post);
+
+    return PostResponse.from(savedPost);
   }
 
   @Override

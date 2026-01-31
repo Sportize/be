@@ -10,10 +10,9 @@ import lombok.Builder;
 public record CreatePostRequest(
     @NotBlank(message = "제목은 필수입니다.") String title,
     @NotBlank(message = "내용은 필수입니다.") String content,
-    boolean isAnonymous,
-    String imgUrl) {
-// TODO : S3 세팅 후 imgUrl은 multipartform으로 변경
-  public Post toEntity(PostProperty property, User user) { // DTO -> Entity 변환
+    boolean isAnonymous) {
+
+  public Post toEntity(PostProperty property, User user, String imgUrl) {
     return Post.builder()
         .title(title)
         .content(content)
