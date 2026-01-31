@@ -30,6 +30,7 @@ public class S3ServiceImpl implements S3Service {
 
   @Override
   public String uploadFile(PathName pathName, MultipartFile file) {
+
     validateFile(file);
 
     String fileName = createFileName(pathName, file.getOriginalFilename());
