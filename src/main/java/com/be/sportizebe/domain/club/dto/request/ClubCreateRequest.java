@@ -12,15 +12,14 @@ public record ClubCreateRequest(
   @Schema(description = "동호회 소개", example = "매주 토요일 축구합니다") String introduce,
   @Schema(description = "동호회 관련 종목", example = "SOCCER") SportType clubType,
   @Schema(description = "최대 정원", example = "20") Integer maxMembers) {
-  // 관련 종목은 파라미터로 받음
-  // TODO : S3 세팅 후 imgUrl은 multipartform으로 변경
 
-  public Club toEntity(User user) {
+  public Club toEntity(User user, String clubImage) {
     return Club.builder()
       .name(name)
       .introduce(introduce)
       .clubType(clubType)
       .maxMembers(maxMembers)
+      .clubImage(clubImage)
       .leader(user)
       .build();
   }

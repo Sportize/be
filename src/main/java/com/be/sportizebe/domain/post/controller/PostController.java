@@ -18,9 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,13 +32,14 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/posts/{property}")
-    @Operation(summary = "게시글 생성", description = "게시판 종류별 게시글 생성")
+    @PostMapping(value = "/posts/{property}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "게시글 생성", description = "게시판 종류별 게시글 생성 (이미지 첨부 가능)")
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
-        @RequestBody @Valid CreatePostRequest request,
+        @RequestPart("request") @Valid CreatePostRequest request,
+        @RequestPart(value = "image", required = false) MultipartFile image, // JSON 아님
         @AuthenticationPrincipal User user) {
-        PostResponse response = postService.createPost(property, request, user);
+        PostResponse response = postService.createPost(property, request, image, user);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("게시글 생성 성공", response));
     }

@@ -44,11 +44,17 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private List<SportType> interestType; // 사용자 관심 종목
 
+    private String profileImage; // 프로필 사진 URL
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글 목록
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }
