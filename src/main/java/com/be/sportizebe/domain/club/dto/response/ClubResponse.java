@@ -13,7 +13,8 @@ public record ClubResponse(
     @Schema(description = "동호회 소개", example = "매주 토요일 축구합니다") String introduce,
     @Schema(description = "동호회 관련 종목", example = "SOCCER") SportType clubType,
     @Schema(description = "최대 정원", example = "20") Integer maxMembers,
-    @Schema(description = "동호회장 닉네임", example = "닉네임") String leaderNickname) {
+    @Schema(description = "동호회장 닉네임", example = "닉네임") String leaderNickname,
+    @Schema(description = "동호회 이미지 URL") String clubImageUrl) {
 
   public static ClubResponse from(Club club) {
     return ClubResponse.builder()
@@ -23,6 +24,7 @@ public record ClubResponse(
       .clubType(club.getClubType())
       .maxMembers(club.getMaxMembers())
       .leaderNickname(club.getLeader().getNickname())
+      .clubImageUrl(club.getClubImage())
       .build();
   }
 }

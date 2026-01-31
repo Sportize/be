@@ -37,6 +37,8 @@ public class Club extends BaseTimeEntity {
   @Column(nullable = false)
   private Integer maxMembers; // 최대 정원
 
+  private String clubImage; // 동호회 사진 URL
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "leader_id", nullable = false)
   private User leader; // 동호회장
@@ -53,5 +55,9 @@ public class Club extends BaseTimeEntity {
     this.introduce = introduce;
     this.maxMembers = maxMembers;
     this.clubType = clubType;
+  }
+
+  public void updateClubImage(String clubImage) {
+    this.clubImage = clubImage;
   }
 }
