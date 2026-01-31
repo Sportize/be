@@ -35,10 +35,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
-            .requestMatchers("/api/users/**").permitAll()
+            .requestMatchers("/api/users/signup").permitAll()
+            .requestMatchers("/api/users/**").authenticated()
             .requestMatchers("/ws-stomp/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/**").permitAll() // 조회는 인증 필요 없음
             .anyRequest().authenticated()
         )
         .exceptionHandling(exception -> exception

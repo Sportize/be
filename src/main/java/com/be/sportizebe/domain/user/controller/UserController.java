@@ -1,10 +1,12 @@
 package com.be.sportizebe.domain.user.controller;
 
+import com.be.sportizebe.domain.auth.exception.AuthErrorCode;
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.service.UserServiceImpl;
+import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
