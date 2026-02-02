@@ -1,6 +1,7 @@
 package com.be.sportizebe.domain.comment.service;
 
 import com.be.sportizebe.domain.comment.dto.request.CreateCommentRequest;
+import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.comment.dto.response.CommentResponse;
 import com.be.sportizebe.domain.comment.entity.Comment;
 import com.be.sportizebe.domain.comment.exception.CommentErrorCode;
@@ -13,6 +14,8 @@ import com.be.sportizebe.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +29,7 @@ public class CommentServiceImpl implements CommentService {
   private final PostRepository postRepository;
 
   @Override
+  @CacheEvict(cacheNames = {"commentList", "commentCount"}, key = "#postId")
   @Transactional
   public CommentResponse createComment(Long postId, CreateCommentRequest request, User user) {
     // 게시글 조회
@@ -57,22 +61,25 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
+  @Cacheable(cacheNames = "commentList", key = "#postId")
   @Transactional
-  public List<CommentResponse> getCommentsByPostId(Long postId) {
+  public CommentListResponse getCommentsByPostId(Long postId) {
     // 게시글 조회
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
     List<Comment> comments = commentRepository.findByPostAndParentIsNullOrderByCreatedAtAsc(post);
-
-    return comments.stream()
+    List<CommentResponse> list = comments.stream()
         .map(CommentResponse::from) // 여기서 LazyInitializationException가 터질 수 있기때문에 @Transaction필요
         .toList();
+
+    return CommentListResponse.of(list);
   }
 
   @Override
+  @CacheEvict(cacheNames = {"commentList", "commentCount"}, key = "#postId")
   @Transactional
-  public void deleteComment(Long commentId, User user) {
+  public void deleteComment(Long postId, Long commentId, User user) {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
 
@@ -85,6 +92,7 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
+  @Cacheable(cacheNames = "commentCount", key = "#postId")
   public long getCommentCount(Long postId) {
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));

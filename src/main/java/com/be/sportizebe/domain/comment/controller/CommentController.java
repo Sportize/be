@@ -1,6 +1,7 @@
 package com.be.sportizebe.domain.comment.controller;
 
 import com.be.sportizebe.domain.comment.dto.request.CreateCommentRequest;
+import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.comment.dto.response.CommentResponse;
 import com.be.sportizebe.domain.comment.service.CommentService;
 import com.be.sportizebe.domain.user.entity.User;
@@ -38,10 +39,10 @@ public class CommentController {
 
     @GetMapping
     @Operation(summary = "댓글 목록 조회", description = "게시글의 댓글 목록 조회 (대댓글 포함)")
-    public ResponseEntity<BaseResponse<List<CommentResponse>>> getComments(
+    public ResponseEntity<BaseResponse<CommentListResponse>> getComments(
         @Parameter(description = "게시글 ID") @PathVariable Long postId) {
-        List<CommentResponse> responses = commentService.getCommentsByPostId(postId);
-        return ResponseEntity.ok(BaseResponse.success(responses));
+        CommentListResponse response = commentService.getCommentsByPostId(postId);
+        return ResponseEntity.ok(BaseResponse.success(response));
     }
 
     @DeleteMapping("/{commentId}")
@@ -50,7 +51,7 @@ public class CommentController {
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
         @Parameter(description = "댓글 ID") @PathVariable Long commentId,
         @AuthenticationPrincipal User user) {
-        commentService.deleteComment(commentId, user);
+        commentService.deleteComment(postId, commentId, user);
         return ResponseEntity.ok(BaseResponse.success("댓글 삭제 성공", null));
     }
 
