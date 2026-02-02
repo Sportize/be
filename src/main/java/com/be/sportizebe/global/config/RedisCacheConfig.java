@@ -1,5 +1,6 @@
 package com.be.sportizebe.global.config;
 
+import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -27,12 +28,11 @@ public class RedisCacheConfig {
     public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         // 캐시 역직렬화를 위해 타입 정보(@class)를 포함하도록 설정
         ObjectMapper objectMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
+                 .addModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 // ❗ 타입 정보 절대 쓰지 않음
                 .build();
         // 캐시에 들어가는 값의 직렬화 방식 결정
-
         // 기본 캐시(대부분)는 Object로 직렬화/역직렬화
         Jackson2JsonRedisSerializer<Object> defaultValueSerializer =
                 new Jackson2JsonRedisSerializer<>(Object.class);
@@ -42,8 +42,19 @@ public class RedisCacheConfig {
         Jackson2JsonRedisSerializer<PostPageResponse> postListValueSerializer =
                 new Jackson2JsonRedisSerializer<>(PostPageResponse.class);
         postListValueSerializer.setObjectMapper(objectMapper);
-        // TTL(캐시 수명) 정책 정의
-        // 아무 설정 없는 캐시(Default) = 5분
+
+        // CommentList 캐시는 CommentListResponse 타입으로 역직렬화
+        Jackson2JsonRedisSerializer<CommentListResponse> commentListSerializer =
+                new Jackson2JsonRedisSerializer<>(CommentListResponse.class);
+        commentListSerializer.setObjectMapper(objectMapper);
+
+        // commentCount 캐시는 Long 타입으로 역직렬화
+        Jackson2JsonRedisSerializer<Long> commentCountSerializer =
+                new Jackson2JsonRedisSerializer<>(Long.class);
+        commentCountSerializer.setObjectMapper(objectMapper);
+
+        // 기본 캐시 설정
+        // TTL: 5분, Serializer: Object 기준
         RedisCacheConfiguration defaultConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
                         .serializeValuesWith(
@@ -54,7 +65,8 @@ public class RedisCacheConfig {
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
 
 
-        // 캐시별로 TTL override 가능 ( post, commet 등 우리가 원하는 값으로 TTL 설정 가능 )
+        // 개별 캐시 설정
+        // Post, Comment 등 역직렬화 문제 생기는 것들은 우리가 임의로 설정해주기
         cacheConfigs.put(
                 "facilityNear",
                 defaultConfig.entryTtl(Duration.ofSeconds(60))
@@ -68,6 +80,14 @@ public class RedisCacheConfig {
                 RedisCacheConfiguration.defaultCacheConfig()
                         .serializeValuesWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(postListValueSerializer)
+                        )
+                        .entryTtl(Duration.ofSeconds(30))
+        );
+        cacheConfigs.put(
+                "commentList",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(commentListSerializer)
                         )
                         .entryTtl(Duration.ofSeconds(30))
         );
