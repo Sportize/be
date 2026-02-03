@@ -1,13 +1,11 @@
 package com.be.sportizebe.domain.user.controller;
 
-import com.be.sportizebe.domain.auth.exception.AuthErrorCode;
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
-import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.service.UserServiceImpl;
-import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.response.BaseResponse;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -38,10 +36,10 @@ public class UserController {
     @PostMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "프로필 사진 업로드", description = "사용자 프로필 사진을 업로드합니다. (최대 5MB, jpg/jpeg/png/gif/webp 지원)")
     public ResponseEntity<BaseResponse<ProfileImageResponse>> uploadProfileImage(
-        @AuthenticationPrincipal User user,
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo,
         @RequestPart("file") MultipartFile file
     ) {
-        ProfileImageResponse response = userService.uploadProfileImage(user.getId(), file);
+        ProfileImageResponse response = userService.uploadProfileImage(userAuthInfo.getId(), file);
         return ResponseEntity.ok(BaseResponse.success("프로필 사진 업로드 성공", response));
     }
 }

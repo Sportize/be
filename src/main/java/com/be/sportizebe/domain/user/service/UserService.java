@@ -12,5 +12,4 @@ public interface UserService {
 
   // 프로필 사진 업로드
   ProfileImageResponse uploadProfileImage(Long userId, MultipartFile file);
-
 }

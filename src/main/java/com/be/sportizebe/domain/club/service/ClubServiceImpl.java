@@ -11,6 +11,8 @@ import com.be.sportizebe.domain.club.exception.ClubErrorCode;
 import com.be.sportizebe.domain.club.repository.ClubMemberRepository;
 import com.be.sportizebe.domain.club.repository.ClubRepository;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.exception.UserErrorCode;
+import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.s3.enums.PathName;
 import com.be.sportizebe.global.s3.service.S3Service;
@@ -27,11 +29,15 @@ public class ClubServiceImpl implements ClubService {
   private final ClubRepository clubRepository;
   private final ChatRoomService chatRoomService;
   private final ClubMemberRepository clubMemberRepository;
+  private final UserRepository userRepository;
   private final S3Service s3Service;
 
   @Override
   @Transactional
-  public ClubResponse createClub(ClubCreateRequest request, MultipartFile image, User user) {
+  public ClubResponse createClub(ClubCreateRequest request, MultipartFile image, Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
     if (clubRepository.existsByName(request.name())) {
       throw new CustomException(ClubErrorCode.CLUB_NAME_DUPLICATED);
     }
@@ -62,12 +68,12 @@ public class ClubServiceImpl implements ClubService {
 
   @Override
   @Transactional
-  public ClubResponse updateClub(Long clubId, ClubUpdateRequest request, User user) {
+  public ClubResponse updateClub(Long clubId, ClubUpdateRequest request, Long userId) {
     Club club = clubRepository.findById(clubId)
         .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
 
     // 동호회 방장만 수정 가능하도록 검증
-    if (club.getLeader().getId() != user.getId()) {
+    if (club.getLeader().getId() != userId) {
       throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
     }
 
@@ -86,12 +92,12 @@ public class ClubServiceImpl implements ClubService {
 
   @Override
   @Transactional
-  public ClubImageResponse updateClubImage(Long clubId, MultipartFile image, User user) {
+  public ClubImageResponse updateClubImage(Long clubId, MultipartFile image, Long userId) {
     Club club = clubRepository.findById(clubId)
         .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
 
     // 동호회 방장만 수정 가능하도록 검증
-    if (club.getLeader().getId() != user.getId()) {
+    if (club.getLeader().getId() != userId) {
       throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
     }
 

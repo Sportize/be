@@ -4,8 +4,8 @@ import com.be.sportizebe.domain.comment.dto.request.CreateCommentRequest;
 import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.comment.dto.response.CommentResponse;
 import com.be.sportizebe.domain.comment.service.CommentService;
-import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.response.BaseResponse;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +29,8 @@ public class CommentController {
     public ResponseEntity<BaseResponse<CommentResponse>> createComment(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
         @RequestBody @Valid CreateCommentRequest request,
-        @AuthenticationPrincipal User user) {
-        CommentResponse response = commentService.createComment(postId, request, user);
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+        CommentResponse response = commentService.createComment(postId, request, userAuthInfo.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("댓글 생성 성공", response));
     }
@@ -50,8 +48,8 @@ public class CommentController {
     public ResponseEntity<BaseResponse<Void>> deleteComment(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
         @Parameter(description = "댓글 ID") @PathVariable Long commentId,
-        @AuthenticationPrincipal User user) {
-        commentService.deleteComment(postId, commentId, user);
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+        commentService.deleteComment(postId, commentId, userAuthInfo.getId());
         return ResponseEntity.ok(BaseResponse.success("댓글 삭제 성공", null));
     }
 

@@ -6,6 +6,8 @@ import com.be.sportizebe.domain.chat.repository.ChatRoomRepository;
 import com.be.sportizebe.domain.club.entity.Club;
 import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.exception.UserErrorCode;
+import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ChatRoom createGroup(Club club) {
@@ -29,17 +32,19 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatRoom createNote(Post post, User guestUser) {
+    public ChatRoom createNote(Post post, Long guestUserId) {
         User hostUser = post.getUser(); // 게시글 등록자
 
         // 자기 자신에게 채팅 불가
-        if (hostUser.getId() == guestUser.getId()) {
+        if (hostUser.getId() == guestUserId) {
             throw new CustomException(ChatErrorCode.SELF_CHAT_NOT_ALLOWED);
         }
 
         // 이미 존재하는 채팅방이 있으면 반환
-        return chatRoomRepository.findByPostAndGuestUser(post, guestUser)
+        return chatRoomRepository.findByPostAndGuestUserId(post, guestUserId)
                 .orElseGet(() -> {
+                    User guestUser = userRepository.findById(guestUserId)
+                            .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
                     ChatRoom room = ChatRoom.builder()
                             .chatRoomType(ChatRoom.ChatRoomType.NOTE)
                             .post(post)
@@ -50,8 +55,8 @@ public class ChatRoomService {
     }
 
     // 사용자가 참여한 1대1 채팅방 목록 조회
-    public List<ChatRoom> findMyNoteRooms(User user) {
-        return chatRoomRepository.findByPost_UserOrGuestUser(user, user);
+    public List<ChatRoom> findMyNoteRooms(Long userId) {
+        return chatRoomRepository.findByPost_UserIdOrGuestUserId(userId, userId);
     }
 
     public List<ChatRoom> findAll() {

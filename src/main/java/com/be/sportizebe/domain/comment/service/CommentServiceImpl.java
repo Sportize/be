@@ -10,6 +10,8 @@ import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.domain.post.exception.PostErrorCode;
 import com.be.sportizebe.domain.post.repository.PostRepository;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.exception.UserErrorCode;
+import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -27,14 +29,19 @@ public class CommentServiceImpl implements CommentService {
 
   private final CommentRepository commentRepository;
   private final PostRepository postRepository;
+  private final UserRepository userRepository;
 
   @Override
   @CacheEvict(cacheNames = {"commentList", "commentCount"}, key = "#postId")
   @Transactional
-  public CommentResponse createComment(Long postId, CreateCommentRequest request, User user) {
+  public CommentResponse createComment(Long postId, CreateCommentRequest request, Long userId) {
     // 게시글 조회
     Post post = postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
+
+    // 사용자 조회
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
     // 부모 댓글 조회 (대댓글인 경우)
     Comment parent = null; // null로 초기화
@@ -79,12 +86,12 @@ public class CommentServiceImpl implements CommentService {
   @Override
   @CacheEvict(cacheNames = {"commentList", "commentCount"}, key = "#postId")
   @Transactional
-  public void deleteComment(Long postId, Long commentId, User user) {
+  public void deleteComment(Long postId, Long commentId, Long userId) {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new CustomException(CommentErrorCode.COMMENT_NOT_FOUND));
 
     // 작성자 확인
-    if (comment.getUser().getId() != user.getId()) {
+    if (comment.getUser().getId() != userId) {
       throw new CustomException(CommentErrorCode.COMMENT_DELETE_DENIED);
     }
 
