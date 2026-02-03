@@ -46,6 +46,18 @@ public class User extends BaseTimeEntity {
 
     private String profileImage; // 프로필 사진 URL
 
+    private String introduce; // 한줄 소개
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender; // 성별
+
+    @Column(nullable = false, unique = true)
+    private String phoneNumber; // 전화번호
+
+    /*@Column(nullable = false)
+    private String address; // 주소*/
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글 목록

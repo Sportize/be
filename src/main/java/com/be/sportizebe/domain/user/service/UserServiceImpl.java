@@ -3,6 +3,7 @@ package com.be.sportizebe.domain.user.service;
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
+import com.be.sportizebe.domain.user.entity.Gender;
 import com.be.sportizebe.domain.user.entity.Role;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.exception.UserErrorCode;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService {
           .username(request.username())
           .password(encodedPassword)
           .nickname(request.nickName())
+          .phoneNumber(request.phoneNumber())
+          .gender(request.gender())
           .role(Role.USER)
           .build();
 
