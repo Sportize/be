@@ -5,8 +5,8 @@ import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
 import com.be.sportizebe.domain.club.dto.response.ClubImageResponse;
 import com.be.sportizebe.domain.club.dto.response.ClubResponse;
 import com.be.sportizebe.domain.club.service.ClubServiceImpl;
-import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.response.BaseResponse;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +32,8 @@ public class ClubController {
   public ResponseEntity<BaseResponse<ClubResponse>> createClub(
       @RequestPart("request") @Valid ClubCreateRequest request,
       @RequestPart(value = "image", required = false) MultipartFile image,
-      @AuthenticationPrincipal User user) {
-    ClubResponse response = clubService.createClub(request, image, user);
+      @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+    ClubResponse response = clubService.createClub(request, image, userAuthInfo.getId());
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(BaseResponse.success("동호회 생성 성공", response));
   }
@@ -43,8 +43,8 @@ public class ClubController {
   public ResponseEntity<BaseResponse<ClubResponse>> updateClub(
       @PathVariable Long clubId,
       @RequestBody @Valid ClubUpdateRequest request,
-      @AuthenticationPrincipal User user) {
-    ClubResponse response = clubService.updateClub(clubId, request, user);
+      @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+    ClubResponse response = clubService.updateClub(clubId, request, userAuthInfo.getId());
     return ResponseEntity.ok(BaseResponse.success("동호회 수정 성공", response));
   }
 
@@ -53,8 +53,8 @@ public class ClubController {
   public ResponseEntity<BaseResponse<ClubImageResponse>> updateClubImage(
       @Parameter(description = "동호회 ID") @PathVariable Long clubId,
       @RequestPart("image") MultipartFile image,
-      @AuthenticationPrincipal User user) {
-    ClubImageResponse response = clubService.updateClubImage(clubId, image, user);
+      @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+    ClubImageResponse response = clubService.updateClubImage(clubId, image, userAuthInfo.getId());
     return ResponseEntity.ok(BaseResponse.success("동호회 사진 수정 성공", response));
   }
 }

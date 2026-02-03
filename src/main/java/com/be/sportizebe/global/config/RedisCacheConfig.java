@@ -2,6 +2,7 @@ package com.be.sportizebe.global.config;
 
 import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -57,6 +58,11 @@ public class RedisCacheConfig {
         Jackson2JsonRedisSerializer<Boolean> likeStatusSerializer =
                 new Jackson2JsonRedisSerializer<>(Boolean.class);
         likeStatusSerializer.setObjectMapper(objectMapper);
+
+        // userAuthInfo 캐시는 UserAuthInfo 타입으로 역직렬화
+        Jackson2JsonRedisSerializer<UserAuthInfo> userAuthInfoSerializer =
+                new Jackson2JsonRedisSerializer<>(UserAuthInfo.class);
+        userAuthInfoSerializer.setObjectMapper(objectMapper);
 
 
         // 기본 캐시 설정
@@ -115,6 +121,17 @@ public class RedisCacheConfig {
                         )
                         .entryTtl(Duration.ofSeconds(15))
         );
+
+        // JWT 인증 필터에서 사용하는 사용자 인증 정보 캐시 (TTL: 5분)
+        cacheConfigs.put(
+                "userAuthInfo",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(userAuthInfoSerializer)
+                        )
+                        .entryTtl(Duration.ofMinutes(5))
+        );
+
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)
                 .withInitialCacheConfigurations(cacheConfigs)
