@@ -53,6 +53,12 @@ public class RedisCacheConfig {
                 new Jackson2JsonRedisSerializer<>(Long.class);
         commentCountSerializer.setObjectMapper(objectMapper);
 
+        // likeStatus 캐시는 Boolean 타입으로 역직렬화
+        Jackson2JsonRedisSerializer<Boolean> likeStatusSerializer =
+                new Jackson2JsonRedisSerializer<>(Boolean.class);
+        likeStatusSerializer.setObjectMapper(objectMapper);
+
+
         // 기본 캐시 설정
         // TTL: 5분, Serializer: Object 기준
         RedisCacheConfiguration defaultConfig =
@@ -90,6 +96,24 @@ public class RedisCacheConfig {
                                 RedisSerializationContext.SerializationPair.fromSerializer(commentListSerializer)
                         )
                         .entryTtl(Duration.ofSeconds(30))
+        );
+
+        cacheConfigs.put(
+                "likeCount",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(commentCountSerializer)
+                        )
+                        .entryTtl(Duration.ofSeconds(30))
+        );
+
+        cacheConfigs.put(
+                "likeStatus",
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair.fromSerializer(likeStatusSerializer)
+                        )
+                        .entryTtl(Duration.ofSeconds(15))
         );
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(defaultConfig)

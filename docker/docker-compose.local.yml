@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: sportize-postgis-local
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: sportize
+      POSTGRES_USER: angora
+      POSTGRES_PASSWORD: password
+      TZ: Asia/Seoul
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - sportize_pgdata_local:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U angora -d sportize"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    image: redis:7.2.4-alpine
+    container_name: sportize-redis-local
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "password"]
+    volumes:
+      - sportize_redisdata_local:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "password", "PING" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+volumes:
+  sportize_pgdata_local:
+  sportize_redisdata_local:
