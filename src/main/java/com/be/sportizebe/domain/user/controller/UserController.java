@@ -5,6 +5,7 @@ import com.be.sportizebe.domain.user.dto.request.UpdateProfileRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
 import com.be.sportizebe.domain.user.dto.response.UpdateProfileResponse;
+import com.be.sportizebe.domain.user.dto.response.UserInfoResponse;
 import com.be.sportizebe.domain.user.service.UserServiceImpl;
 import com.be.sportizebe.global.response.BaseResponse;
 import com.be.sportizebe.global.cache.dto.UserAuthInfo;
@@ -53,5 +54,14 @@ public class UserController {
     ) {
         UpdateProfileResponse response = userService.updateProfile(userAuthInfo.getId(), request);
         return ResponseEntity.ok(BaseResponse.success("프로필 수정 성공", response));
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 조회합니다.")
+    public ResponseEntity<BaseResponse<UserInfoResponse>> getMyInfo(
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo
+    ) {
+        UserInfoResponse response = userService.getUserInfo(userAuthInfo.getId());
+        return ResponseEntity.ok(BaseResponse.success("사용자 정보 조회 성공", response));
     }
 }

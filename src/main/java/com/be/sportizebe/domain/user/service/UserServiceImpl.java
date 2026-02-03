@@ -5,6 +5,7 @@ import com.be.sportizebe.domain.user.dto.request.UpdateProfileRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
 import com.be.sportizebe.domain.user.dto.response.UpdateProfileResponse;
+import com.be.sportizebe.domain.user.dto.response.UserInfoResponse;
 import com.be.sportizebe.domain.user.entity.Role;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.exception.UserErrorCode;
@@ -78,6 +79,9 @@ public class UserServiceImpl implements UserService {
         // 사용자 프로필 이미지 URL 업데이트
         user.updateProfileImage(profileImageUrl);
 
+        // 프로필 이미지가 캐시에 포함되어 있으므로 캐시 무효화
+        userCacheService.evictUserAuthInfo(userId);
+
         log.info("사용자 프로필 이미지 업로드 완료: userId={}, url={}", userId, profileImageUrl);
 
         return ProfileImageResponse.from(profileImageUrl);
@@ -103,5 +107,16 @@ public class UserServiceImpl implements UserService {
         log.info("사용자 프로필 수정 완료: userId={}", userId);
 
         return UpdateProfileResponse.from(user);
+    }
+
+    @Override
+    public UserInfoResponse getUserInfo(Long userId) {
+        // 캐시에서 사용자 정보 조회 (캐시 미스 시 DB 조회 후 캐싱)
+        var userAuthInfo = userCacheService.findUserAuthInfoById(userId);
+        if (userAuthInfo == null) {
+            throw new CustomException(UserErrorCode.USER_NOT_FOUND);
+        }
+
+        return UserInfoResponse.from(userAuthInfo);
     }
 }
