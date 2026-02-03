@@ -1,8 +1,10 @@
 package com.be.sportizebe.domain.user.controller;
 
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
+import com.be.sportizebe.domain.user.dto.request.UpdateProfileRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
+import com.be.sportizebe.domain.user.dto.response.UpdateProfileResponse;
 import com.be.sportizebe.domain.user.service.UserServiceImpl;
 import com.be.sportizebe.global.response.BaseResponse;
 import com.be.sportizebe.global.cache.dto.UserAuthInfo;
@@ -41,5 +43,15 @@ public class UserController {
     ) {
         ProfileImageResponse response = userService.uploadProfileImage(userAuthInfo.getId(), file);
         return ResponseEntity.ok(BaseResponse.success("프로필 사진 업로드 성공", response));
+    }
+
+    @PutMapping("/profile")
+    @Operation(summary = "프로필 수정", description = "닉네임, 한줄소개를 수정합니다.")
+    public ResponseEntity<BaseResponse<UpdateProfileResponse>> updateProfile(
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo,
+        @RequestBody @Valid UpdateProfileRequest request
+    ) {
+        UpdateProfileResponse response = userService.updateProfile(userAuthInfo.getId(), request);
+        return ResponseEntity.ok(BaseResponse.success("프로필 수정 성공", response));
     }
 }

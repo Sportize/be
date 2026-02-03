@@ -1,13 +1,15 @@
 package com.be.sportizebe.domain.user.service;
 
 import com.be.sportizebe.domain.user.dto.request.SignUpRequest;
+import com.be.sportizebe.domain.user.dto.request.UpdateProfileRequest;
 import com.be.sportizebe.domain.user.dto.response.ProfileImageResponse;
 import com.be.sportizebe.domain.user.dto.response.SignUpResponse;
-import com.be.sportizebe.domain.user.entity.Gender;
+import com.be.sportizebe.domain.user.dto.response.UpdateProfileResponse;
 import com.be.sportizebe.domain.user.entity.Role;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.domain.user.exception.UserErrorCode;
 import com.be.sportizebe.domain.user.repository.UserRepository;
+import com.be.sportizebe.global.cache.service.UserCacheService;
 import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.s3.enums.PathName;
 import com.be.sportizebe.global.s3.service.S3Service;
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserCacheService userCacheService;
     private final S3Service s3Service;
 
     @Override
@@ -78,5 +81,27 @@ public class UserServiceImpl implements UserService {
         log.info("사용자 프로필 이미지 업로드 완료: userId={}, url={}", userId, profileImageUrl);
 
         return ProfileImageResponse.from(profileImageUrl);
+    }
+
+    @Override
+    @Transactional
+    public UpdateProfileResponse updateProfile(Long userId, UpdateProfileRequest request) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
+        // 닉네임 중복 체크 (자신의 닉네임이 아닌 경우만)
+        if (!user.getNickname().equals(request.nickname())
+            && userRepository.existsByNickname(request.nickname())) {
+            throw new CustomException(UserErrorCode.DUPLICATE_NICKNAME);
+        }
+
+        user.updateProfile(request.nickname(), request.introduce());
+
+        // 닉네임이 UserAuthInfo에 포함되어 있으므로 캐시 무효화
+        userCacheService.evictUserAuthInfo(userId);
+
+        log.info("사용자 프로필 수정 완료: userId={}", userId);
+
+        return UpdateProfileResponse.from(user);
     }
 }
