@@ -1,5 +1,6 @@
 package com.be.sportizebe.domain.user.entity;
 
+import com.be.sportizebe.domain.club.entity.ClubMember;
 import com.be.sportizebe.domain.post.entity.Post;
 import com.be.sportizebe.global.common.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,6 +62,10 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>(); // 작성한 게시글 목록
+
+    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    private List<ClubMember> clubMemberships = new ArrayList<>(); // 가입한 동호회 목록
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
