@@ -1,5 +1,6 @@
 package com.be.sportizebe.domain.user.dto.request;
 
+import com.be.sportizebe.domain.user.entity.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,6 +19,13 @@ public record SignUpRequest(
 
     @Schema(description = "닉네임", example = "스포티")
     @NotBlank(message = "사용할 닉네임을 입력해주세요.")
-    String nickName
+    String nickName,
+
+    @Schema(description = "성별", example = "MALE")
+    Gender gender,
+
+    @Schema(description = "전화번호", example = "010-xxxx-xxxx")
+    @NotBlank(message = "전화번호를 입력해주세요")
+    String phoneNumber
 ) {
 }
