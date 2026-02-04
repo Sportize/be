@@ -1,7 +1,7 @@
 package com.be.sportizebe.domain.notification.controller;
 
 import com.be.sportizebe.domain.notification.dto.response.JoinClubRequestResponse;
-import com.be.sportizebe.domain.notification.service.JoinClubRequestServiceImpl;
+import com.be.sportizebe.domain.notification.service.JoinClubRequestService;
 import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import com.be.sportizebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +21,7 @@ import java.util.List;
 @Tag(name = "join-request", description = "동호회 가입 관련 API")
 public class JoinClubRequestController {
 
-  private final JoinClubRequestServiceImpl joinClubRequestService;
+  private final JoinClubRequestService joinClubRequestService;
 
   @PostMapping("/{clubId}/join")
   @Operation(summary = "가입 신청", description = "동호회에 가입을 신청합니다. 동호회장에게 알림이 전송됩니다.")
