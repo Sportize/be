@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/clubs")
-@Tag(name = "club", description = "동호회 관련 API")
+@Tag(name = "club", description = "동호회 관리 관련 API")
 public class ClubController {
 
   private final ClubServiceImpl clubService;
