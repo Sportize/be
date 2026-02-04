@@ -59,7 +59,7 @@ public class NotificationController {
   public ResponseEntity<BaseResponse<Void>> markAsRead(
       @Parameter(description = "알림 ID") @PathVariable Long notificationId,
       @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
-    notificationService.markAsRead(notificationId);
+    notificationService.markAsRead(notificationId, userAuthInfo.getId());
     return ResponseEntity.ok(BaseResponse.success("알림 읽음 처리 완료", null));
   }
 

@@ -28,5 +28,5 @@ public interface NotificationService {
   long getUnreadCount(User user);
 
   // 알림 읽음 처리
-  void markAsRead(Long notificationId);
+  void markAsRead(Long notificationId, Long userId);
 }

@@ -105,9 +105,15 @@ public class NotificationServiceImpl implements NotificationService {
 
   @Override
   @Transactional
-  public void markAsRead(Long notificationId) {
-    notificationRepository.findById(notificationId)
-        .ifPresent(Notification::markAsRead);
+  public void markAsRead(Long notificationId, Long userId) {
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new IllegalArgumentException("알림을 찾을 수 없습니다."));
+
+    if (!userId.equals(notification.getReceiver().getId())) {
+      throw new IllegalArgumentException("본인의 알림만 읽음 처리할 수 있습니다.");
+    }
+
+    notification.markAsRead();
   }
 
   /**
