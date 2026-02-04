@@ -49,7 +49,7 @@ public class ClubServiceImpl implements ClubService {
     }
 
     // 동호회 엔티티 생성
-    Club club = request.toEntity(user, clubImageUrl);
+    Club club = request.toEntity(clubImageUrl);
     clubRepository.save(club);
 
     // 동호회 멤버 테이블에 방장(동호회 생성자) 추가
@@ -58,6 +58,7 @@ public class ClubServiceImpl implements ClubService {
         .user(user)
         .role(ClubMember.ClubRole.LEADER)
         .build();
+    club.getMembers().add(leaderMember);
     clubMemberRepository.save(leaderMember);
 
     // 동호회 단체 채팅방 생성
@@ -73,7 +74,7 @@ public class ClubServiceImpl implements ClubService {
         .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
 
     // 동호회 방장만 수정 가능하도록 검증
-    if (club.getLeader().getId() != userId) {
+    if (!club.isLeader(userId)) {
       throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
     }
 
@@ -97,7 +98,7 @@ public class ClubServiceImpl implements ClubService {
         .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
 
     // 동호회 방장만 수정 가능하도록 검증
-    if (club.getLeader().getId() != userId) {
+    if (!club.isLeader(userId)) {
       throw new CustomException(ClubErrorCode.CLUB_UPDATE_DENIED);
     }
 

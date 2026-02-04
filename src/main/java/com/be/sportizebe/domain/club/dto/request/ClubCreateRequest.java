@@ -2,7 +2,6 @@ package com.be.sportizebe.domain.club.dto.request;
 
 import com.be.sportizebe.domain.club.entity.Club;
 import com.be.sportizebe.domain.user.entity.SportType;
-import com.be.sportizebe.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,14 +12,13 @@ public record ClubCreateRequest(
   @Schema(description = "동호회 관련 종목", example = "SOCCER") SportType clubType,
   @Schema(description = "최대 정원", example = "20") Integer maxMembers) {
 
-  public Club toEntity(User user, String clubImage) {
+  public Club toEntity(String clubImage) {
     return Club.builder()
       .name(name)
       .introduce(introduce)
       .clubType(clubType)
       .maxMembers(maxMembers)
       .clubImage(clubImage)
-      .leader(user)
       .build();
   }
 }
