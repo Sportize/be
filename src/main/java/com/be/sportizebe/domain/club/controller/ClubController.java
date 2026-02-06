@@ -2,8 +2,10 @@ package com.be.sportizebe.domain.club.controller;
 
 import com.be.sportizebe.domain.club.dto.request.ClubCreateRequest;
 import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
+import com.be.sportizebe.domain.club.dto.response.ClubDetailResponse;
 import com.be.sportizebe.domain.club.dto.response.ClubImageResponse;
 import com.be.sportizebe.domain.club.dto.response.ClubResponse;
+import com.be.sportizebe.domain.club.dto.response.ClubScrollResponse;
 import com.be.sportizebe.domain.club.service.ClubServiceImpl;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.response.BaseResponse;
@@ -37,7 +39,27 @@ public class ClubController {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(BaseResponse.success("동호회 생성 성공", response));
   }
+    @GetMapping
+    @Operation(summary = "모든 동호회 조회 (무한스크롤)",
+            description = "커서 기반 무한스크롤 방식으로 동호회 목록을 조회합니다.")
+    public ResponseEntity<BaseResponse<ClubScrollResponse>> getClubs(
+            @RequestParam(required = false) Long cursor,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        ClubScrollResponse response = clubService.getClubsByScroll(cursor, size);
+        return ResponseEntity.ok(
+                BaseResponse.success("동호회 목록 조회 성공", response)
+        );
+    }
 
+    @GetMapping("/{clubId}")
+    @Operation(summary = "동호회 상세 조회", description = "동호회 단건 상세 정보를 조회합니다.")
+    public ResponseEntity<BaseResponse<ClubDetailResponse>> getClub(
+            @Parameter(description = "동호회 ID") @PathVariable Long clubId
+    ) {
+        ClubDetailResponse response = clubService.getClub(clubId);
+        return ResponseEntity.ok(BaseResponse.success("동호회 상세 조회 성공", response));
+    }
   @PutMapping("/{clubId}")
   @Operation(summary = "동호회 수정", description = "동호회 정보를 수정합니다. 동호회장만 수정할 수 있습니다.")
   public ResponseEntity<BaseResponse<ClubResponse>> updateClub(
