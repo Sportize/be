@@ -3,8 +3,7 @@ package com.be.sportizebe.domain.club.service;
 import com.be.sportizebe.domain.chat.service.ChatRoomService;
 import com.be.sportizebe.domain.club.dto.request.ClubCreateRequest;
 import com.be.sportizebe.domain.club.dto.request.ClubUpdateRequest;
-import com.be.sportizebe.domain.club.dto.response.ClubImageResponse;
-import com.be.sportizebe.domain.club.dto.response.ClubResponse;
+import com.be.sportizebe.domain.club.dto.response.*;
 import com.be.sportizebe.domain.club.entity.Club;
 import com.be.sportizebe.domain.club.entity.ClubMember;
 import com.be.sportizebe.domain.club.exception.ClubErrorCode;
@@ -17,9 +16,12 @@ import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.s3.enums.PathName;
 import com.be.sportizebe.global.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -113,6 +115,70 @@ public class ClubServiceImpl implements ClubService {
     // 동호회 이미지 URL 업데이트
     club.updateClubImage(clubImageUrl);
 
-    return ClubImageResponse.from(clubImageUrl);
-  }
+        return ClubImageResponse.from(clubImageUrl);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public ClubDetailResponse getClub(Long clubId) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
+
+        int memberCount = clubMemberRepository.countByClubId(clubId);
+
+        return ClubDetailResponse.from(club, memberCount);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public ClubScrollResponse getClubsByScroll(Long cursor, int size) {
+
+        // +1 조회해서 다음 페이지 존재 여부 판단
+        Pageable pageable = PageRequest.of(0, size + 1);
+
+        List<Club> clubs = clubRepository.findClubsByCursor(cursor, pageable);
+
+        boolean hasNext = clubs.size() > size;
+
+        if (hasNext) {
+            clubs = clubs.subList(0, size);
+        }
+
+        List<ClubListItemResponse> items = clubs.stream()
+                .map(club -> {
+                    int memberCount = clubMemberRepository.countByClubId(club.getId());
+                    return ClubListItemResponse.from(club, memberCount);
+                })
+                .toList();
+
+        Long nextCursor = items.isEmpty()
+                ? null
+                : items.get(items.size() - 1).clubId();
+
+        return new ClubScrollResponse(items, nextCursor, hasNext);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public ClubScrollResponse getMyClubsByScroll(Long cursor, int size, User user) {
+
+        Pageable pageable = PageRequest.of(0, size + 1);
+
+        List<Club> clubs = clubRepository.findMyClubsByCursor(user.getId(), cursor, pageable);
+
+        boolean hasNext = clubs.size() > size;
+
+        if (hasNext) {
+            clubs = clubs.subList(0, size);
+        }
+
+        List<ClubListItemResponse> items = clubs.stream()
+                .map(club -> {
+                    int memberCount = clubMemberRepository.countByClubId(club.getId());
+                    return ClubListItemResponse.from(club, memberCount);
+                })
+                .toList();
+
+        Long nextCursor = items.isEmpty() ? null : items.get(items.size() - 1).clubId();
+
+        return new ClubScrollResponse(items, nextCursor, hasNext);
+    }
+
 }

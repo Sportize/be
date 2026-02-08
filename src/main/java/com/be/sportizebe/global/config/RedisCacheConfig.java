@@ -33,6 +33,7 @@ public class RedisCacheConfig {
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 // ❗ 타입 정보 절대 쓰지 않음
                 .build();
+
         // 캐시에 들어가는 값의 직렬화 방식 결정
         // 기본 캐시(대부분)는 Object로 직렬화/역직렬화
         Jackson2JsonRedisSerializer<Object> defaultValueSerializer =
