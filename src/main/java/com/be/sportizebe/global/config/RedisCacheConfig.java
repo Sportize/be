@@ -78,31 +78,33 @@ public class RedisCacheConfig {
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
 
 
-        // 개별 캐시 설정
         // Post, Comment 등 역직렬화 문제 생기는 것들은 우리가 임의로 설정해주기
+        // 개별 캐시 설정
         cacheConfigs.put(
                 "facilityNear",
-                defaultConfig.entryTtl(Duration.ofSeconds(60))
+                defaultConfig.entryTtl(Duration.ofMinutes(5))
         );
         cacheConfigs.put(
                 "facilityMarkers",
-                defaultConfig.entryTtl(Duration.ofSeconds(60))
+                defaultConfig.entryTtl(Duration.ofMinutes(5))
         );
+
         cacheConfigs.put(
                 "postList",
                 RedisCacheConfiguration.defaultCacheConfig()
                         .serializeValuesWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(postListValueSerializer)
                         )
-                        .entryTtl(Duration.ofSeconds(30))
+                        .entryTtl(Duration.ofMinutes(5))
         );
+
         cacheConfigs.put(
                 "commentList",
                 RedisCacheConfiguration.defaultCacheConfig()
                         .serializeValuesWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(commentListSerializer)
                         )
-                        .entryTtl(Duration.ofSeconds(30))
+                        .entryTtl(Duration.ofMinutes(5))
         );
 
         cacheConfigs.put(
@@ -111,7 +113,7 @@ public class RedisCacheConfig {
                         .serializeValuesWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(commentCountSerializer)
                         )
-                        .entryTtl(Duration.ofSeconds(30))
+                        .entryTtl(Duration.ofMinutes(5))
         );
 
         cacheConfigs.put(
@@ -120,7 +122,7 @@ public class RedisCacheConfig {
                         .serializeValuesWith(
                                 RedisSerializationContext.SerializationPair.fromSerializer(likeStatusSerializer)
                         )
-                        .entryTtl(Duration.ofSeconds(15))
+                        .entryTtl(Duration.ofMinutes(5))
         );
 
         // JWT 인증 필터에서 사용하는 사용자 인증 정보 캐시 (TTL: 5분)
