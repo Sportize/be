@@ -8,15 +8,13 @@ import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.post.service.PostService;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
 import com.be.sportizebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -40,9 +38,9 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponse>> createPost(
         @Parameter(description = "게시판 종류 (SOCCER, BASKETBALL, FREE)") @PathVariable PostProperty property,
         @RequestPart("request") @Valid CreatePostRequest request,
-        @RequestPart(value = "image", required = false) MultipartFile image, // JSON 아님
-        @AuthenticationPrincipal User user) {
-        PostResponse response = postService.createPost(property, request, image, user);
+        @RequestPart(value = "image", required = false) MultipartFile image,
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+        PostResponse response = postService.createPost(property, request, image, userAuthInfo.getId());
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(BaseResponse.success("게시글 생성 성공", response));
     }
@@ -52,8 +50,8 @@ public class PostController {
     public ResponseEntity<BaseResponse<PostResponse>> updatePost(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
         @RequestBody @Valid UpdatePostRequest request,
-        @AuthenticationPrincipal User user) {
-        PostResponse response = postService.updatePost(postId, request, user);
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+        PostResponse response = postService.updatePost(postId, request, userAuthInfo.getId());
         return ResponseEntity.ok(BaseResponse.success("게시글 수정 성공", response));
     }
 
@@ -61,8 +59,8 @@ public class PostController {
     @Operation(summary = "게시글 삭제", description = "게시글 삭제 (작성자만 가능)")
     public ResponseEntity<BaseResponse<Void>> deletePost(
         @Parameter(description = "게시글 ID") @PathVariable Long postId,
-        @AuthenticationPrincipal User user) {
-        postService.deletePost(postId, user);
+        @AuthenticationPrincipal UserAuthInfo userAuthInfo) {
+        postService.deletePost(postId, userAuthInfo.getId());
         return ResponseEntity.ok(BaseResponse.success("게시글 삭제 성공", null));
     }
 

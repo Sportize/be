@@ -3,20 +3,17 @@ package com.be.sportizebe.domain.comment.service;
 import com.be.sportizebe.domain.comment.dto.request.CreateCommentRequest;
 import com.be.sportizebe.domain.comment.dto.response.CommentListResponse;
 import com.be.sportizebe.domain.comment.dto.response.CommentResponse;
-import com.be.sportizebe.domain.user.entity.User;
-
-import java.util.List;
 
 public interface CommentService {
 
   // 댓글 생성 (대댓글 포함)
-  CommentResponse createComment(Long postId, CreateCommentRequest request, User user);
+  CommentResponse createComment(Long postId, CreateCommentRequest request, Long userId);
 
   // 게시글의 댓글 목록 조회
   CommentListResponse getCommentsByPostId(Long postId);
 
   // 댓글 삭제
-  void deleteComment(Long postId, Long commentId, User user);
+  void deleteComment(Long postId, Long commentId, Long userId);
 
   // 게시글의 댓글 수 조회
   long getCommentCount(Long postId);

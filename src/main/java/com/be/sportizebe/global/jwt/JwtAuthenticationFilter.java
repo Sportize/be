@@ -1,8 +1,8 @@
 package com.be.sportizebe.global.jwt;
 
-import com.be.sportizebe.domain.user.entity.User;
-import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
+import com.be.sportizebe.global.cache.dto.UserAuthInfo;
+import com.be.sportizebe.global.cache.service.UserCacheService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private static final String BEARER_PREFIX = "Bearer ";
 
   private final JwtProvider jwtProvider;
-  private final UserRepository userRepository;
+  private final UserCacheService userCacheService;
 
   @Override
   protected void doFilterInternal(
@@ -39,15 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       // TODO: AccessToken과 RefreshToken 구분해서 검증하는 로직 필요함
       if (token != null && jwtProvider.validateToken(token)) {
         Long userId = Long.parseLong(jwtProvider.extractSocialId(token));
-        User user = userRepository.findById(userId)
-            .orElse(null);
+        UserAuthInfo userAuthInfo = userCacheService.findUserAuthInfoById(userId);
 
-        if (user != null) {
+        if (userAuthInfo != null) {
           UsernamePasswordAuthenticationToken authentication =
               new UsernamePasswordAuthenticationToken(
-                  user, // User 엔티티를 직접 principal로 설정
+                  userAuthInfo, // 캐시된 UserAuthInfo를 principal로 설정
                   null,
-                  List.of(new SimpleGrantedAuthority(user.getRole().name())));
+                  List.of(new SimpleGrantedAuthority(userAuthInfo.getRole().name())));
           SecurityContextHolder.getContext().setAuthentication(authentication);
 
           log.debug("SecurityContext에 '{}' 인증 정보를 저장했습니다.", userId);

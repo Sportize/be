@@ -18,10 +18,10 @@ public class PostListKeyGenerator implements KeyGenerator {
 
         return String.format(
                 "%s:%d:%d:%s",
-                property.name(),
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSort().toString()
+                property.name(), // SOCCER, BASEKETBALL (Sport Type)
+                pageable.getPageNumber(), // 페이지 번호
+                pageable.getPageSize(), // 패이지 크기
+                pageable.getSort().toString() // 정렬 기준
         );
     }
 }

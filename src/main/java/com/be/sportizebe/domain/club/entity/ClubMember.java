@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "club_members")
+@Table(name = "club_members", uniqueConstraints = {
+  @UniqueConstraint(columnNames = {"club_id","user_id"}) // 같은 사용자가 같은 동호회에 중복 가입을 방지
+})
 public class ClubMember extends BaseTimeEntity {
 
   @Id

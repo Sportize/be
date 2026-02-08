@@ -1,0 +1,47 @@
+[
+  {
+    "name": "🐞 bug",
+    "color": "d73a4a",
+    "description": "버그 리포트"
+  },
+  {
+    "name": "✨ feature",
+    "color": "0e8a16",
+    "description": "새로운 기능 요청"
+  },
+  {
+    "name": "♻️ refactor",
+    "color": "6f42c1",
+    "description": "리팩토링 작업"
+  },
+  {
+    "name": "🧹 chore",
+    "color": "1d76db",
+    "description": "빌드 설정 등 잡일"
+  },
+  {
+    "name": "🚧 in progress",
+    "color": "fbca04",
+    "description": "작업 진행 중"
+  },
+  {
+    "name": "👀 review needed",
+    "color": "ffab00",
+    "description": "리뷰 요청 필요"
+  },
+  {
+    "name": "🔴 priority: high",
+    "color": "e11d21",
+    "description": "높은 우선순위"
+  },
+  {
+    "name": "🟠 priority: medium",
+    "color": "f9d0c4",
+    "description": "중간 우선순위"
+  },
+  {
+    "name": "🟢 priority: low",
+    "color": "c2e0c6",
+    "description": "낮은 우선순위"
+  }
+]

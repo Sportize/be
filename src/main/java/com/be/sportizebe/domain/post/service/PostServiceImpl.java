@@ -10,6 +10,8 @@ import com.be.sportizebe.domain.post.entity.PostProperty;
 import com.be.sportizebe.domain.post.exception.PostErrorCode;
 import com.be.sportizebe.domain.post.repository.PostRepository;
 import com.be.sportizebe.domain.user.entity.User;
+import com.be.sportizebe.domain.user.exception.UserErrorCode;
+import com.be.sportizebe.domain.user.repository.UserRepository;
 import com.be.sportizebe.global.exception.CustomException;
 import com.be.sportizebe.global.exception.GlobalErrorCode;
 import com.be.sportizebe.global.s3.enums.PathName;
@@ -33,13 +35,17 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
     private final S3Service s3Service;
     private static final int PAGE_SIZE = 10;
 
     @Override
     @CacheEvict(cacheNames = "postList", allEntries = true)
     @Transactional
-    public PostResponse createPost(PostProperty property, CreatePostRequest request, MultipartFile image, User user) {
+    public PostResponse createPost(PostProperty property, CreatePostRequest request, MultipartFile image, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
+
         // 이미지가 있으면 S3에 업로드
         String imgUrl = null;
         if (image != null && !image.isEmpty()) {
@@ -55,12 +61,12 @@ public class PostServiceImpl implements PostService {
     @Override
     @CacheEvict(cacheNames = "postList", allEntries = true)
     @Transactional
-    public void deletePost(Long postId, User user) {
+    public void deletePost(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
         // 작성자 확인
-        if (post.getUser().getId() != user.getId()) {
+        if (post.getUser().getId() != userId) {
             throw new CustomException(PostErrorCode.POST_DELETE_DENIED);
         }
 
@@ -70,12 +76,12 @@ public class PostServiceImpl implements PostService {
     @Override
     @CacheEvict(cacheNames = "postList", allEntries = true)
     @Transactional
-    public PostResponse updatePost(Long postId, UpdatePostRequest request, User user) {
+    public PostResponse updatePost(Long postId, UpdatePostRequest request, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomException(PostErrorCode.POST_NOT_FOUND));
 
         // 작성자 확인
-        if (post.getUser().getId() != user.getId()) {
+        if (post.getUser().getId() != userId) {
             throw new CustomException(PostErrorCode.POST_UPDATE_DENIED);
         }
 

@@ -10,11 +10,9 @@ import com.be.sportizebe.domain.user.entity.User;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ClubService {
-    ClubResponse createClub(ClubCreateRequest request, MultipartFile image, User user); // 동호회 생성
+    ClubResponse createClub(ClubCreateRequest request, MultipartFile image, Long userId); // 동호회 생성
 
-    ClubResponse updateClub(Long clubId, ClubUpdateRequest request, User user); // 동호회 수정
-
-    ClubImageResponse updateClubImage(Long clubId, MultipartFile image, User user); // 동호회 사진 수정
+    ClubResponse updateClub(Long clubId, ClubUpdateRequest request, Long userId); // 동호회 수정
 
     ClubDetailResponse getClub(Long clubId); // 동호회 개별 조회
 
@@ -22,4 +20,5 @@ public interface ClubService {
 
     ClubScrollResponse getMyClubsByScroll(Long cursor, int size, User user); // 내가 가입한 동호회 조회 (무한 스크롤)
 
+    ClubImageResponse updateClubImage(Long clubId, MultipartFile image, Long userId); // 동호회 사진 수정
 }

@@ -39,16 +39,39 @@ public class Club extends BaseTimeEntity {
 
   private String clubImage; // 동호회 사진 URL
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "leader_id", nullable = false)
-  private User leader; // 동호회장
-
   @OneToOne(mappedBy = "club", fetch = FetchType.LAZY)
   private ChatRoom chatRoom; // 동호회 채팅방
 
   @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private List<ClubMember> members = new ArrayList<>();
+
+  /**
+   * 동호회장(LEADER) 조회
+   * ClubMember에서 LEADER 역할을 가진 멤버를 찾아 반환
+   */
+  public ClubMember getLeaderMember() {
+    return members.stream()
+        .filter(member -> member.getRole() == ClubMember.ClubRole.LEADER)
+        .findFirst()
+        .orElse(null);
+  }
+
+  /**
+   * 동호회장 User 조회
+   */
+  public User getLeader() {
+    ClubMember leaderMember = getLeaderMember();
+    return leaderMember != null ? leaderMember.getUser() : null;
+  }
+
+  /**
+   * 특정 사용자가 동호회장인지 확인
+   */
+  public boolean isLeader(Long userId) {
+    ClubMember leaderMember = getLeaderMember();
+    return leaderMember != null && leaderMember.getUser().getId() == userId;
+  }
 
   public void update(String name, String introduce, Integer maxMembers, SportType clubType) {
     this.name = name;
