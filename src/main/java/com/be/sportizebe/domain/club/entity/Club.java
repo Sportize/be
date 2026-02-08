@@ -50,7 +50,7 @@ public class Club extends BaseTimeEntity {
    * 동호회장(LEADER) 조회
    * ClubMember에서 LEADER 역할을 가진 멤버를 찾아 반환
    */
-  public ClubMember getLeaderMember() {
+  private ClubMember getLeaderMember() {
     return members.stream()
         .filter(member -> member.getRole() == ClubMember.ClubRole.LEADER)
         .findFirst()

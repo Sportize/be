@@ -25,14 +25,9 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional
   public Notification createJoinRequestNotification(JoinClubRequest joinRequest, User receiver) {
-    String message = String.format("%s님이 %s 동호회에 가입을 신청했습니다.",
-        joinRequest.getUser().getNickname(),
-        joinRequest.getClub().getName());
-
     Notification notification = Notification.builder()
         .receiver(receiver)
         .type(Notification.NotificationType.JOIN_REQUEST)
-        .message(message)
         .joinClubRequest(joinRequest)
         .build();
 
@@ -47,13 +42,9 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional
   public Notification createJoinApprovedNotification(JoinClubRequest joinRequest) {
-    String message = String.format("%s 동호회 가입이 승인되었습니다.",
-        joinRequest.getClub().getName());
-
     Notification notification = Notification.builder()
         .receiver(joinRequest.getUser())
         .type(Notification.NotificationType.JOIN_APPROVED)
-        .message(message)
         .joinClubRequest(joinRequest)
         .build();
 
@@ -66,13 +57,10 @@ public class NotificationServiceImpl implements NotificationService {
   @Override
   @Transactional
   public Notification createJoinRejectedNotification(JoinClubRequest joinRequest) {
-    String message = String.format("%s 동호회 가입이 거절되었습니다.",
-        joinRequest.getClub().getName());
 
     Notification notification = Notification.builder()
         .receiver(joinRequest.getUser())
         .type(Notification.NotificationType.JOIN_REJECTED)
-        .message(message)
         .joinClubRequest(joinRequest)
         .build();
 

@@ -66,7 +66,7 @@ public class JoinClubRequestServiceImpl implements JoinClubRequestService {
     joinClubRequestRepository.save(joinRequest);
 
     // 동호회장에게 알림 전송
-    User leader = club.getLeader();
+    User leader = club.getLeader(); // 사용자 관련 정보 추출을 위해 getLeader() 사용
     if (leader != null) {
       notificationService.createJoinRequestNotification(joinRequest, leader);
     }
