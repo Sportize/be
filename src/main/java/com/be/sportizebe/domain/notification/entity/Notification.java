@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 })
 public class Notification extends BaseTimeEntity {
 
+  // TODO : 알람 종류 구체화해서 수정
   public enum NotificationType {
     JOIN_REQUEST,   // 가입 신청 (동호회장에게)
     JOIN_APPROVED,  // 가입 승인 (신청자에게)
@@ -38,9 +39,6 @@ public class Notification extends BaseTimeEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private NotificationType type;
-
-  @Column(nullable = false)
-  private String message; // 알림 메시지
 
   @Column(nullable = false)
   @Builder.Default
