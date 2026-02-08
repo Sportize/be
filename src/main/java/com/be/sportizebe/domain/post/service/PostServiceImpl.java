@@ -1,6 +1,7 @@
 package com.be.sportizebe.domain.post.service;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
+import com.be.sportizebe.domain.post.dto.response.CursorPageResponse;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
 import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
 import com.be.sportizebe.domain.post.dto.response.PostResponse;
@@ -10,6 +11,7 @@ import com.be.sportizebe.domain.post.exception.PostErrorCode;
 import com.be.sportizebe.domain.post.repository.PostRepository;
 import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.exception.CustomException;
+import com.be.sportizebe.global.exception.GlobalErrorCode;
 import com.be.sportizebe.global.s3.enums.PathName;
 import com.be.sportizebe.global.s3.service.S3Service;
 import jakarta.transaction.Transactional;
@@ -18,9 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -29,6 +34,7 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final S3Service s3Service;
+    private static final int PAGE_SIZE = 10;
 
     @Override
     @CacheEvict(cacheNames = "postList", allEntries = true)
@@ -84,5 +90,29 @@ public class PostServiceImpl implements PostService {
     public PostPageResponse getPosts(PostProperty property, Pageable pageable) {
         Page<Post> page = postRepository.findByProperty(property, pageable);
         return PostPageResponse.from(page);
+    }
+
+
+    @Override
+    public CursorPageResponse<PostResponse> getMyPostsCursor(User user, Long cursor) {
+
+        if (user == null) {
+            throw new CustomException(GlobalErrorCode.UNAUTHORIZED);
+        }
+        // cursor 없으면 첫 페이지, cursor 있으면 다음 페이지
+        List<Post> posts = (cursor == null)
+                ? postRepository.findTop11ByUserIdOrderByIdDesc(user.getId())
+                : postRepository.findTop11ByUserIdAndIdLessThanOrderByIdDesc(user.getId(), cursor);
+
+        boolean hasNext = posts.size() > PAGE_SIZE;
+        if (hasNext) posts = posts.subList(0, PAGE_SIZE);
+
+        Long nextCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getId();
+
+        return CursorPageResponse.of(
+                posts.stream().map(PostResponse::from).toList(),
+                hasNext ? nextCursor : null,
+                hasNext
+        );
     }
 }

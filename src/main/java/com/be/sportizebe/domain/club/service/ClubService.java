@@ -19,4 +19,7 @@ public interface ClubService {
     ClubDetailResponse getClub(Long clubId); // 동호회 개별 조회
 
     ClubScrollResponse getClubsByScroll(Long cursor, int size); // 동호회 전체 조회 (무한 스크롤)
+
+    ClubScrollResponse getMyClubsByScroll(Long cursor, int size, User user); // 내가 가입한 동호회 조회 (무한 스크롤)
+
 }

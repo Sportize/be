@@ -2,6 +2,7 @@ package com.be.sportizebe.domain.post.controller;
 
 import com.be.sportizebe.domain.post.dto.request.CreatePostRequest;
 import com.be.sportizebe.domain.post.dto.request.UpdatePostRequest;
+import com.be.sportizebe.domain.post.dto.response.CursorPageResponse;
 import com.be.sportizebe.domain.post.dto.response.PostPageResponse;
 import com.be.sportizebe.domain.post.dto.response.PostResponse;
 import com.be.sportizebe.domain.post.entity.PostProperty;
@@ -10,9 +11,11 @@ import com.be.sportizebe.domain.user.entity.User;
 import com.be.sportizebe.global.response.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -71,4 +74,15 @@ public class PostController {
         PostPageResponse response = postService.getPosts(property, pageable);
         return ResponseEntity.ok(BaseResponse.success("게시글 목록 조회 성공", response));
     }
+    @GetMapping("/posts/me")
+    @Operation(summary = "내 게시글 목록 조회", description = "로그인한 사용자가 작성한 게시글을 최신순으로 무한 스크롤(커서 기반) 조회합니다.")
+    public ResponseEntity<BaseResponse<CursorPageResponse<PostResponse>>> getMyPosts(
+            @Parameter(description = "커서(마지막으로 조회된 게시글 ID). 첫 요청은 생략", example = "123")
+            @RequestParam(required = false) Long cursor,
+            @AuthenticationPrincipal User user)
+    {
+        CursorPageResponse<PostResponse> response = postService.getMyPostsCursor(user, cursor);
+        return ResponseEntity.ok(BaseResponse.success("내 게시글 목록 조회 성공", response));
+    }
+
 }

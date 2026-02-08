@@ -111,7 +111,16 @@ public class ClubServiceImpl implements ClubService {
 
         return ClubImageResponse.from(clubImageUrl);
     }
+    @Override
+    @Transactional(readOnly = true)
+    public ClubDetailResponse getClub(Long clubId) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
 
+        int memberCount = clubMemberRepository.countByClubId(clubId);
+
+        return ClubDetailResponse.from(club, memberCount);
+    }
     @Override
     @Transactional(readOnly = true)
     public ClubScrollResponse getClubsByScroll(Long cursor, int size) {
@@ -140,15 +149,30 @@ public class ClubServiceImpl implements ClubService {
 
         return new ClubScrollResponse(items, nextCursor, hasNext);
     }
-
     @Override
     @Transactional(readOnly = true)
-    public ClubDetailResponse getClub(Long clubId) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new CustomException(ClubErrorCode.CLUB_NOT_FOUND));
+    public ClubScrollResponse getMyClubsByScroll(Long cursor, int size, User user) {
 
-        int memberCount = clubMemberRepository.countByClubId(clubId);
+        Pageable pageable = PageRequest.of(0, size + 1);
 
-        return ClubDetailResponse.from(club, memberCount);
+        List<Club> clubs = clubRepository.findMyClubsByCursor(user.getId(), cursor, pageable);
+
+        boolean hasNext = clubs.size() > size;
+
+        if (hasNext) {
+            clubs = clubs.subList(0, size);
+        }
+
+        List<ClubListItemResponse> items = clubs.stream()
+                .map(club -> {
+                    int memberCount = clubMemberRepository.countByClubId(club.getId());
+                    return ClubListItemResponse.from(club, memberCount);
+                })
+                .toList();
+
+        Long nextCursor = items.isEmpty() ? null : items.get(items.size() - 1).clubId();
+
+        return new ClubScrollResponse(items, nextCursor, hasNext);
     }
+
 }
